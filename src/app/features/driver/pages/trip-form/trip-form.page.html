@@ -1,0 +1,114 @@
+<section class="container" style="padding-block: 2rem; max-width: 640px;">
+  <h1>{{ isEdit() ? 'Modifier le trajet' : 'Publier un trajet' }}</h1>
+
+  @if (loadingVehicles()) {
+    <app-spinner label="Chargement de vos véhicules…" />
+  } @else if (vehicles().length === 0 && !isEdit()) {
+    <div class="alert alert--warning" role="alert">
+      Vous devez d'abord ajouter un véhicule avant de publier un trajet.
+      <a routerLink="/driver/vehicles">Ajouter un véhicule</a>
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-field">
+        <label class="form-label" for="vehicleId">Véhicule</label>
+        <select id="vehicleId" class="form-control" formControlName="vehicleId">
+          <option value="" disabled>Choisir un véhicule</option>
+          @for (v of vehicles(); track v.id) {
+            <option [value]="v.id">{{ v.brand }} {{ v.model }} — {{ v.registrationNumber }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="departureCity">Ville de départ</label>
+        <input id="departureCity" class="form-control" type="text" formControlName="departureCity" />
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="destinationCity">Destination</label>
+        <input id="destinationCity" class="form-control" type="text" formControlName="destinationCity" />
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="departureAddress">Adresse de départ (optionnel)</label>
+        <input id="departureAddress" class="form-control" type="text" formControlName="departureAddress" />
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="destinationAddress">Adresse de destination (optionnel)</label>
+        <input id="destinationAddress" class="form-control" type="text" formControlName="destinationAddress" />
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="departureDate">Date de départ</label>
+        <input
+          id="departureDate"
+          class="form-control"
+          type="date"
+          formControlName="departureDate"
+          [attr.aria-invalid]="form.get('departureDate')?.invalid && form.get('departureDate')?.touched"
+        />
+        @if (form.get('departureDate')?.hasError('pastDate') && form.get('departureDate')?.touched) {
+          <span class="form-error">La date ne peut pas être dans le passé.</span>
+        }
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="departureTime">Heure de départ</label>
+        <input id="departureTime" class="form-control" type="time" formControlName="departureTime" />
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="meetingPoint">Point de rencontre (optionnel)</label>
+        <input id="meetingPoint" class="form-control" type="text" formControlName="meetingPoint" />
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="pricePerSeat">Prix par place (FCFA)</label>
+        <input
+          id="pricePerSeat"
+          class="form-control"
+          type="number"
+          min="0"
+          formControlName="pricePerSeat"
+          [attr.aria-invalid]="form.get('pricePerSeat')?.invalid && form.get('pricePerSeat')?.touched"
+        />
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="totalSeats">Nombre de places</label>
+        <input
+          id="totalSeats"
+          class="form-control"
+          type="number"
+          min="1"
+          formControlName="totalSeats"
+          [attr.aria-invalid]="form.get('totalSeats')?.invalid && form.get('totalSeats')?.touched"
+        />
+        @if (isEdit()) {
+          <span class="form-hint">Le nombre total de places ne peut plus être modifié après création.</span>
+        }
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="description">Description (optionnel)</label>
+        <textarea id="description" class="form-control" rows="3" formControlName="description"></textarea>
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="rules">Règles du trajet (optionnel)</label>
+        <textarea id="rules" class="form-control" rows="3" formControlName="rules"></textarea>
+      </div>
+
+      <button type="submit" class="btn btn--primary" [disabled]="saving()">
+        {{ saving() ? 'Enregistrement…' : isEdit() ? 'Enregistrer les modifications' : 'Créer le brouillon' }}
+      </button>
+      @if (!isEdit()) {
+        <p class="form-hint" style="margin-top: 0.5rem;">
+          Le trajet sera créé en brouillon. Publiez-le ensuite depuis « Mes trajets » pour le rendre visible aux passagers.
+        </p>
+      }
+    </form>
+  }
+</section>

@@ -1,0 +1,73 @@
+@use '../../../../../styles/tokens' as t;
+
+.hero {
+  background: linear-gradient(160deg, t.$color-secondary-dark 0%, t.$color-secondary 100%);
+  color: #fff;
+  padding-block: t.$space-8;
+}
+
+.hero__inner {
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-6;
+}
+
+.hero__copy {
+  max-width: 640px;
+
+  h1 {
+    color: #fff;
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+  }
+}
+
+.hero__subtitle {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1.05rem;
+}
+
+.how-it-works,
+.advantages {
+  padding-block: t.$space-8;
+}
+
+.how-it-works__grid,
+.advantages__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: t.$space-5;
+  margin-top: t.$space-5;
+}
+
+.how-it-works__step {
+  text-align: center;
+}
+
+.how-it-works__number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: t.$color-primary;
+  color: #fff;
+  font-weight: 700;
+  margin-bottom: t.$space-3;
+}
+
+.cta {
+  background: t.$color-primary-light;
+  padding-block: t.$space-8;
+}
+
+.cta__inner {
+  text-align: center;
+}
+
+@media (max-width: t.$breakpoint-md) {
+  .how-it-works__grid,
+  .advantages__grid {
+    grid-template-columns: 1fr;
+  }
+}

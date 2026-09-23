@@ -1,0 +1,93 @@
+<section class="container" style="padding-block: 2rem; max-width: 640px;">
+  @switch (state()) {
+    @case ('loading') {
+      <app-spinner label="Chargement de votre réservation…" />
+    }
+    @case ('error') {
+      <app-error-state title="Réservation introuvable" [retryable]="false" />
+    }
+    @case ('success') {
+      @if (booking(); as b) {
+        <div class="card">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap: 0.75rem;">
+            <h1 style="margin:0;">Réservation {{ b.bookingReference }}</h1>
+            <span
+              class="badge"
+              [class.badge--success]="b.status === 'CONFIRMED' || b.status === 'COMPLETED'"
+              [class.badge--warning]="b.status === 'PENDING'"
+              [class.badge--danger]="b.status === 'CANCELLED' || b.status === 'REJECTED' || b.status === 'EXPIRED'"
+            >
+              {{ b.status }}
+            </span>
+          </div>
+
+          <dl class="booking-detail__list">
+            <dt>Trajet</dt>
+            <dd>{{ b.trip.departureCity }} → {{ b.trip.destinationCity }}</dd>
+            <dt>Date</dt>
+            <dd>{{ b.trip.departureDate }} à {{ b.trip.departureTime.slice(0, 5) }}</dd>
+            <dt>Places réservées</dt>
+            <dd>{{ b.numberOfSeats }}</dd>
+            <dt>Prix unitaire</dt>
+            <dd>{{ b.unitPrice }} FCFA</dd>
+            <dt>Montant total</dt>
+            <dd><strong>{{ b.totalAmount }} FCFA</strong></dd>
+            <dt>Statut du paiement</dt>
+            <dd>{{ b.paymentStatus }}</dd>
+            <dt>Réservée le</dt>
+            <dd>{{ b.bookedAt | date: 'medium' }}</dd>
+            @if (b.cancelledAt) {
+              <dt>Annulée le</dt>
+              <dd>{{ b.cancelledAt | date: 'medium' }}</dd>
+            }
+          </dl>
+
+          <div style="display:flex; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap;">
+            <a class="btn btn--outline" [routerLink]="['/trips', b.trip.id]">Voir le trajet</a>
+            @if (canCancel(b)) {
+              <button type="button" class="btn btn--danger" [disabled]="cancelling()" (click)="cancel()">
+                {{ cancelling() ? 'Annulation…' : 'Annuler la réservation' }}
+              </button>
+            }
+          </div>
+
+          @if (canPay(b)) {
+            <div class="card" style="margin-top: 1.5rem; background: var(--color-background);">
+              <h2 style="margin-top:0;">Payer cette réservation</h2>
+              <form [formGroup]="paymentForm" (ngSubmit)="pay()" style="display:flex; gap: 0.75rem; align-items:flex-end; flex-wrap: wrap;">
+                <div class="form-field" style="margin-bottom:0;">
+                  <label class="form-label" for="paymentMethod">Méthode de paiement</label>
+                  <select id="paymentMethod" class="form-control" formControlName="paymentMethod">
+                    @for (method of paymentMethods; track method) {
+                      <option [value]="method">{{ method }}</option>
+                    }
+                  </select>
+                </div>
+                <button type="submit" class="btn btn--primary" [disabled]="paying()">
+                  {{ paying() ? 'Traitement…' : 'Payer ' + b.totalAmount + ' FCFA' }}
+                </button>
+              </form>
+              <p class="form-hint" style="margin-top: 0.5rem; margin-bottom: 0;">
+                Paiement simulé : aucun fournisseur réel (Orange Money, Wave…) n'est encore intégré.
+              </p>
+            </div>
+          }
+
+          @if (b.status === 'COMPLETED' && driverUserId() && !reviewSubmitted()) {
+            <div style="margin-top: 2rem;">
+              <h2>Laisser un avis sur le conducteur</h2>
+              <app-review-form
+                [tripId]="b.trip.id"
+                [bookingId]="b.id"
+                [targetUserId]="driverUserId()!"
+                (submitted)="reviewSubmitted.set(true)"
+              />
+            </div>
+          } @else if (b.status === 'COMPLETED' && reviewSubmitted()) {
+            <p class="alert alert--success" style="margin-top: 1.5rem;">Merci pour votre avis !</p>
+          }
+        </div>
+      }
+    }
+  }
+</section>

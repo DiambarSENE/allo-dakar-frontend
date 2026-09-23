@@ -1,0 +1,85 @@
+<section class="container" style="padding-block: 2rem; max-width: 720px;">
+  <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap: wrap; gap: 1rem;">
+    <h1 style="margin:0;">Mes véhicules</h1>
+    <button type="button" class="btn btn--primary" (click)="showForm.set(!showForm())">
+      {{ showForm() ? 'Annuler' : 'Ajouter un véhicule' }}
+    </button>
+  </div>
+
+  @if (showForm()) {
+    <form class="card" style="margin-block: 1.5rem;" [formGroup]="form" (ngSubmit)="addVehicle()">
+      <div class="form-field">
+        <label class="form-label" for="brand">Marque</label>
+        <input id="brand" class="form-control" type="text" formControlName="brand" />
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="model">Modèle</label>
+        <input id="model" class="form-control" type="text" formControlName="model" />
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="registrationNumber">Immatriculation</label>
+        <input id="registrationNumber" class="form-control" type="text" formControlName="registrationNumber" />
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="color">Couleur (optionnel)</label>
+        <input id="color" class="form-control" type="text" formControlName="color" />
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="year">Année (optionnel)</label>
+        <input id="year" class="form-control" type="number" formControlName="year" />
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="numberOfSeats">Nombre de places</label>
+        <input id="numberOfSeats" class="form-control" type="number" min="1" formControlName="numberOfSeats" />
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="vehicleType">Type de véhicule</label>
+        <select id="vehicleType" class="form-control" formControlName="vehicleType">
+          @for (type of vehicleTypes; track type) {
+            <option [value]="type">{{ type }}</option>
+          }
+        </select>
+      </div>
+      <button type="submit" class="btn btn--primary" [disabled]="saving()">
+        {{ saving() ? 'Ajout…' : 'Ajouter le véhicule' }}
+      </button>
+    </form>
+  }
+
+  @if (loading()) {
+    <app-spinner label="Chargement de vos véhicules…" />
+  } @else if (vehicles().length === 0) {
+    <app-empty-state title="Aucun véhicule enregistré" description="Ajoutez un véhicule pour pouvoir publier un trajet." />
+  } @else {
+    <div class="table-wrapper" style="margin-top: 1.5rem;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Véhicule</th>
+            <th>Immatriculation</th>
+            <th>Places</th>
+            <th>Type</th>
+            <th>Statut</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (v of vehicles(); track v.id) {
+            <tr>
+              <td>{{ v.brand }} {{ v.model }} @if (v.year) { ({{ v.year }}) }</td>
+              <td>{{ v.registrationNumber }}</td>
+              <td>{{ v.numberOfSeats }}</td>
+              <td>{{ v.vehicleType }}</td>
+              <td>
+                <span class="badge" [class.badge--success]="v.status === 'ACTIVE'" [class.badge--muted]="v.status !== 'ACTIVE'">
+                  {{ v.status }}
+                </span>
+              </td>
+              <td><button type="button" class="btn btn--danger btn--sm" (click)="deleteVehicle(v)">Supprimer</button></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

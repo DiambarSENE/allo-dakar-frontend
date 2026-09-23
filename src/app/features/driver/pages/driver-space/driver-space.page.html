@@ -1,0 +1,93 @@
+<section class="container driver-space">
+  <h1>Mon espace conducteur</h1>
+
+  @if (profile(); as p) {
+    <div class="driver-space__stats">
+      <div class="card driver-space__stat">
+        <span class="driver-space__stat-label">Note moyenne</span>
+        <app-rating-stars [value]="p.averageRating" />
+      </div>
+      <div class="card driver-space__stat">
+        <span class="driver-space__stat-label">Trajets effectués</span>
+        <span class="driver-space__stat-value">{{ p.totalTrips }}</span>
+      </div>
+      <div class="card driver-space__stat">
+        <span class="driver-space__stat-label">Avis reçus</span>
+        <span class="driver-space__stat-value">{{ p.totalReviews }}</span>
+      </div>
+      <div class="card driver-space__stat">
+        <span class="driver-space__stat-label">Vérification</span>
+        <span
+          class="badge"
+          [class.badge--success]="p.verificationStatus === 'VERIFIED'"
+          [class.badge--warning]="p.verificationStatus === 'PENDING' || p.verificationStatus === 'UNDER_REVIEW'"
+          [class.badge--danger]="p.verificationStatus === 'REJECTED'"
+          [class.badge--info]="p.verificationStatus === 'REQUIRES_MORE_INFORMATION'"
+        >
+          {{ verificationLabels[p.verificationStatus] }}
+        </span>
+      </div>
+    </div>
+  }
+
+  <div class="card driver-space__next">
+    <h2>Prochain départ</h2>
+    @if (loading()) {
+      <app-spinner label="Chargement…" />
+    } @else if (nextTrip(); as t) {
+      <p class="driver-space__trip">{{ t.departureCity }} → {{ t.destinationCity }}</p>
+      <p class="driver-space__meta">{{ t.departureDate }} à {{ t.departureTime.slice(0, 5) }} — {{ t.availableSeats }} / {{ t.totalSeats }} places disponibles</p>
+      <a class="btn btn--primary btn--sm" [routerLink]="['/trips', t.id]">Voir le trajet</a>
+    } @else {
+      <p class="form-hint">Aucun trajet publié à venir.</p>
+      <a class="btn btn--primary btn--sm" routerLink="/driver/trips/new">Publier un trajet</a>
+    }
+  </div>
+
+  <div class="driver-space__grid">
+    <a class="card card--interactive driver-space__tile" routerLink="/driver/trips">
+      <h2>Mes trajets</h2>
+      <p>Gérez vos trajets publiés et leurs réservations.</p>
+    </a>
+    <a class="card card--interactive driver-space__tile" routerLink="/driver/bookings">
+      <h2>Réservations reçues</h2>
+      <p>Consultez les réservations faites sur vos trajets.</p>
+    </a>
+    <a class="card card--interactive driver-space__tile" routerLink="/driver/vehicles">
+      <h2>Mes véhicules</h2>
+      <p>Ajoutez ou modifiez vos véhicules.</p>
+    </a>
+    <a class="card card--interactive driver-space__tile" routerLink="/driver/verification">
+      <h2>Vérification</h2>
+      <p>Suivez votre statut et soumettez vos documents.</p>
+    </a>
+    <a class="card card--interactive driver-space__tile" routerLink="/notifications">
+      <h2>Notifications</h2>
+      <p>Réservations reçues, avis, vérification.</p>
+    </a>
+    <a class="card card--interactive driver-space__tile" routerLink="/profile">
+      <h2>Mon profil</h2>
+      <p>Modifiez vos informations personnelles.</p>
+    </a>
+  </div>
+
+  <div class="card driver-space__reviews">
+    <h2>Derniers avis reçus</h2>
+    @if (reviewsLoading()) {
+      <app-spinner label="Chargement…" />
+    } @else if (reviews().length === 0) {
+      <p class="form-hint">Vous n'avez pas encore reçu d'avis.</p>
+    } @else {
+      <ul class="driver-space__review-list">
+        @for (r of reviews(); track r.id) {
+          <li class="driver-space__review">
+            <app-rating-stars [value]="r.rating" />
+            @if (r.comment) {
+              <p>{{ r.comment }}</p>
+            }
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</section>

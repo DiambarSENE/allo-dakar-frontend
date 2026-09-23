@@ -1,0 +1,35 @@
+<div class="app-shell">
+  <aside class="sidebar" [class.sidebar--open]="sidebarOpen()">
+    <div class="sidebar__brand">
+      Allo<span>Dakar</span> <small>Support</small>
+    </div>
+    <nav class="sidebar__nav">
+      @for (item of navItems; track item.route) {
+        <a [routerLink]="item.route" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: item.route === '/customer-service' }" (click)="closeSidebar()">
+          {{ item.label }}
+        </a>
+      }
+    </nav>
+    <a routerLink="/" class="sidebar__public-link">Retour au site public</a>
+    <button type="button" class="btn btn--outline btn--sm sidebar__logout" (click)="logout()">Déconnexion</button>
+  </aside>
+
+  <div class="app-shell__main">
+    <header class="app-shell__topbar">
+      <button
+        type="button"
+        class="app-shell__menu-toggle"
+        (click)="toggleSidebar()"
+        [attr.aria-expanded]="sidebarOpen()"
+        aria-label="Ouvrir le menu"
+      >
+        ☰
+      </button>
+      <span class="app-shell__user">{{ auth.fullName() }}</span>
+    </header>
+
+    <main class="app-shell__content">
+      <router-outlet />
+    </main>
+  </div>
+</div>

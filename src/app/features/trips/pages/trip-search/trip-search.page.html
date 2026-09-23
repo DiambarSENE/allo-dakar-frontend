@@ -1,0 +1,35 @@
+<section class="container trip-search">
+  <h1>Rechercher un trajet</h1>
+
+  <app-search-trip-form [initialValue]="currentCriteria()" (search)="onSearch($event)" />
+
+  <div class="trip-search__results">
+    @switch (state()) {
+      @case ('loading') {
+        <app-spinner label="Recherche des trajets en cours…" />
+      }
+      @case ('error') {
+        <app-error-state
+          title="Impossible de récupérer les trajets"
+          message="Vérifiez votre connexion puis réessayez."
+          (retry)="retry()"
+        />
+      }
+      @case ('success') {
+        @if (trips().length === 0) {
+          <app-empty-state
+            title="Aucun trajet trouvé"
+            description="Essayez d'élargir vos critères de recherche (dates, prix, ville)."
+          />
+        } @else {
+          <div class="trip-search__grid">
+            @for (trip of trips(); track trip.id) {
+              <app-trip-card [trip]="trip" />
+            }
+          </div>
+          <app-pagination [pagination]="pagination()" (pageChange)="onPageChange($event)" />
+        }
+      }
+    }
+  </div>
+</section>

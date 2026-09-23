@@ -1,0 +1,141 @@
+@use '../../../styles/tokens' as t;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+.site-header {
+  background: t.$color-surface;
+  border-bottom: 1px solid t.$color-border;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: t.$space-3;
+  gap: t.$space-4;
+}
+
+.site-header__logo {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: t.$color-text;
+  text-decoration: none;
+
+  span {
+    color: t.$color-primary;
+  }
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.site-header__menu-toggle {
+  display: none;
+  background: none;
+  border: 1px solid t.$color-border;
+  border-radius: t.$radius-sm;
+  font-size: 1.2rem;
+  padding: t.$space-2 t.$space-3;
+  cursor: pointer;
+}
+
+.site-header__nav {
+  display: flex;
+  align-items: center;
+  gap: t.$space-5;
+
+  a {
+    color: t.$color-text;
+    font-weight: 500;
+    font-size: 0.92rem;
+
+    &:hover {
+      color: t.$color-primary;
+      text-decoration: none;
+    }
+
+    &.is-active {
+      color: t.$color-primary;
+      font-weight: 700;
+    }
+  }
+}
+
+.site-header__user {
+  font-size: 0.85rem;
+  color: t.$color-muted;
+  white-space: nowrap;
+}
+
+main {
+  flex: 1;
+}
+
+.site-footer {
+  background: t.$color-secondary-dark;
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: t.$space-8;
+}
+
+.site-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: t.$space-5;
+  padding-block: t.$space-6;
+}
+
+.site-footer__brand {
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: t.$space-1;
+}
+
+.site-footer__links {
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-2;
+
+  a {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+.site-footer__copyright {
+  width: 100%;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+
+@media (max-width: t.$breakpoint-md) {
+  .site-header__menu-toggle {
+    display: inline-flex;
+  }
+
+  .site-header__nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: t.$color-surface;
+    border-bottom: 1px solid t.$color-border;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: t.$space-4;
+    gap: t.$space-3;
+  }
+
+  .site-header__nav--open {
+    display: flex;
+  }
+}

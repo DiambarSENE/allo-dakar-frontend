@@ -1,0 +1,61 @@
+<section class="container" style="padding-block: 2rem;">
+  <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap: wrap; gap: 1rem;">
+    <h1 style="margin:0;">Mes trajets</h1>
+    <a class="btn btn--primary" routerLink="/driver/trips/new">Publier un trajet</a>
+  </div>
+
+  @switch (state()) {
+    @case ('loading') {
+      <app-spinner label="Chargement de vos trajets…" />
+    }
+    @case ('error') {
+      <app-error-state title="Impossible de charger vos trajets" (retry)="retry()" />
+    }
+    @case ('success') {
+      @if (trips().length === 0) {
+        <app-empty-state title="Vous n'avez publié aucun trajet" description="Créez votre premier trajet pour commencer à recevoir des réservations.">
+          <a class="btn btn--primary" routerLink="/driver/trips/new">Publier un trajet</a>
+        </app-empty-state>
+      } @else {
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Trajet</th>
+                <th>Date</th>
+                <th>Prix</th>
+                <th>Places</th>
+                <th>Statut</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (trip of trips(); track trip.id) {
+                <tr>
+                  <td>{{ trip.departureCity }} → {{ trip.destinationCity }}</td>
+                  <td>{{ trip.departureDate }} {{ trip.departureTime.slice(0, 5) }}</td>
+                  <td>{{ trip.pricePerSeat }} FCFA</td>
+                  <td>{{ trip.availableSeats }} / {{ trip.totalSeats }}</td>
+                  <td><span class="badge" [class]="badgeClass(trip.status)">{{ trip.status }}</span></td>
+                  <td style="display:flex; gap:0.4rem; flex-wrap: wrap;">
+                    <a class="btn btn--outline btn--sm" [routerLink]="['/trips', trip.id]">Voir</a>
+                    @if (trip.status === 'DRAFT') {
+                      <a class="btn btn--outline btn--sm" [routerLink]="['/driver/trips', trip.id, 'edit']">Modifier</a>
+                      <button type="button" class="btn btn--primary btn--sm" [disabled]="publishingId() === trip.id" (click)="publish(trip)">
+                        {{ publishingId() === trip.id ? 'Publication…' : 'Publier' }}
+                      </button>
+                    }
+                    @if (trip.status === 'PUBLISHED') {
+                      <button type="button" class="btn btn--danger btn--sm" (click)="cancel(trip)">Annuler</button>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <app-pagination [pagination]="pagination()" (pageChange)="onPageChange($event)" />
+      }
+    }
+  }
+</section>

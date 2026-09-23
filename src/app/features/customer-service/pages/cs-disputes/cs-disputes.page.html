@@ -1,0 +1,53 @@
+<h1>Litiges</h1>
+
+@switch (state()) {
+  @case ('loading') {
+    <app-spinner label="Chargement des litiges…" />
+  }
+  @case ('error') {
+    <app-error-state title="Impossible de charger les litiges" (retry)="retry()" />
+  }
+  @case ('success') {
+    @if (disputes().length === 0) {
+      <app-empty-state title="Aucun litige" />
+    } @else {
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Ouvert par</th>
+              <th>Description</th>
+              <th>Statut</th>
+              <th>Résolution</th>
+              <th>Ouvert le</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (d of disputes(); track d.id) {
+              <tr>
+                <td>{{ d.type }}</td>
+                <td>{{ d.raisedByFullName }}</td>
+                <td>{{ d.description || '—' }}</td>
+                <td>
+                  <span
+                    class="badge"
+                    [class.badge--success]="d.status === 'RESOLVED'"
+                    [class.badge--warning]="d.status === 'OPEN' || d.status === 'UNDER_REVIEW'"
+                    [class.badge--danger]="d.status === 'REJECTED'"
+                    [class.badge--muted]="d.status === 'CLOSED'"
+                  >
+                    {{ d.status }}
+                  </span>
+                </td>
+                <td>{{ d.resolution || '—' }}</td>
+                <td>{{ d.createdAt | date: 'medium' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <app-pagination [pagination]="pagination()" (pageChange)="onPageChange($event)" />
+    }
+  }
+}

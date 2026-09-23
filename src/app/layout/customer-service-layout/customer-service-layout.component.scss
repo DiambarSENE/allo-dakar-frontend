@@ -1,0 +1,137 @@
+@use '../../../styles/tokens' as t;
+
+.app-shell {
+  display: flex;
+  min-height: 100dvh;
+}
+
+.sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: t.$color-text;
+  color: rgba(255, 255, 255, 0.85);
+  display: flex;
+  flex-direction: column;
+  padding: t.$space-5 t.$space-4;
+  gap: t.$space-5;
+}
+
+.sidebar__brand {
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: #fff;
+
+  span {
+    color: t.$color-primary;
+  }
+}
+
+.sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-1;
+  flex: 1;
+
+  a {
+    color: rgba(255, 255, 255, 0.75);
+    padding: t.$space-2 t.$space-3;
+    border-radius: t.$radius-sm;
+    font-weight: 500;
+    font-size: 0.9rem;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      text-decoration: none;
+    }
+
+    &.is-active {
+      background: t.$color-primary;
+      color: #fff;
+    }
+  }
+}
+
+.sidebar__logout {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
+
+  &:hover {
+    border-color: t.$color-primary;
+    color: t.$color-primary;
+  }
+}
+
+.app-shell__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.app-shell__topbar {
+  display: flex;
+  align-items: center;
+  gap: t.$space-4;
+  padding: t.$space-3 t.$space-5;
+  background: t.$color-surface;
+  border-bottom: 1px solid t.$color-border;
+}
+
+.app-shell__menu-toggle {
+  display: none;
+  background: none;
+  border: 1px solid t.$color-border;
+  border-radius: t.$radius-sm;
+  font-size: 1.1rem;
+  padding: t.$space-1 t.$space-3;
+  cursor: pointer;
+}
+
+.app-shell__home-link {
+  font-size: 0.85rem;
+  color: t.$color-muted;
+}
+
+.app-shell__user {
+  margin-left: auto;
+  font-weight: 600;
+  color: t.$color-secondary;
+  font-size: 0.85rem;
+}
+
+.app-shell__content {
+  flex: 1;
+  padding: t.$space-5;
+}
+
+@media (max-width: t.$breakpoint-lg) {
+  .app-shell__menu-toggle {
+    display: block;
+  }
+
+  .sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 200;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+
+    &--open {
+      transform: translateX(0);
+    }
+  }
+}
+
+.sidebar__brand small {
+  font-weight: 500;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-left: 0.3rem;
+}
+
+.sidebar__public-link {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+}

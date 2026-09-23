@@ -1,0 +1,71 @@
+@use '../../../../../styles/tokens' as t;
+
+.trip-detail {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: t.$space-5;
+  padding-block: t.$space-6;
+  align-items: start;
+}
+
+.trip-detail__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: t.$space-3;
+  margin-bottom: t.$space-4;
+
+  h1 {
+    margin: 0;
+  }
+}
+
+.trip-detail__facts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: t.$space-4;
+  margin: 0 0 t.$space-5;
+
+  dt {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: t.$color-muted;
+  }
+
+  dd {
+    margin: 2px 0 0;
+    font-weight: 600;
+  }
+}
+
+.trip-detail__price {
+  color: t.$color-secondary;
+}
+
+.trip-detail__booking {
+  position: sticky;
+  top: 90px;
+}
+
+.trip-detail__total {
+  display: flex;
+  justify-content: space-between;
+  margin: t.$space-3 0;
+}
+
+@media (max-width: t.$breakpoint-lg) {
+  .trip-detail {
+    grid-template-columns: 1fr;
+  }
+
+  .trip-detail__booking {
+    position: static;
+  }
+}
+
+@media (max-width: t.$breakpoint-md) {
+  .trip-detail__facts {
+    grid-template-columns: 1fr;
+  }
+}

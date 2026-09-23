@@ -1,0 +1,11 @@
+# Sert uniquement le build Angular (statique, via Nginx). Le backend et Keycloak vivent dans
+# allo-dakar-backend/docker-compose.yml — voir ce fichier pour les démarrer ensemble.
+# apiUrl/keycloak.url doivent pointer vers des URLs PUBLIQUEMENT accessibles depuis le
+# navigateur de l'utilisateur (jamais un hostname Docker interne comme "backend" ou
+# "keycloak") — voir environment.production.ts, à ajuster selon votre déploiement réel.
+services:
+  frontend:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-4200}:8080"

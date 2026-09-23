@@ -1,0 +1,60 @@
+<section class="container" style="padding-block: 2rem;">
+  <h1>Mes réservations</h1>
+
+  @switch (state()) {
+    @case ('loading') {
+      <app-spinner label="Chargement de vos réservations…" />
+    }
+    @case ('error') {
+      <app-error-state title="Impossible de charger vos réservations" (retry)="retry()" />
+    }
+    @case ('success') {
+      @if (bookings().length === 0) {
+        <app-empty-state title="Vous n'avez aucune réservation" description="Recherchez un trajet pour réserver votre première place.">
+          <a class="btn btn--primary" routerLink="/trips">Rechercher un trajet</a>
+        </app-empty-state>
+      } @else {
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Référence</th>
+                <th>Trajet</th>
+                <th>Date</th>
+                <th>Places</th>
+                <th>Montant</th>
+                <th>Statut</th>
+                <th>Paiement</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (booking of bookings(); track booking.id) {
+                <tr>
+                  <td>{{ booking.bookingReference }}</td>
+                  <td>{{ booking.trip.departureCity }} → {{ booking.trip.destinationCity }}</td>
+                  <td>{{ booking.trip.departureDate }}</td>
+                  <td>{{ booking.numberOfSeats }}</td>
+                  <td>{{ booking.totalAmount }} FCFA</td>
+                  <td>
+                    <span
+                      class="badge"
+                      [class.badge--success]="booking.status === 'CONFIRMED' || booking.status === 'COMPLETED'"
+                      [class.badge--warning]="booking.status === 'PENDING'"
+                      [class.badge--danger]="booking.status === 'CANCELLED' || booking.status === 'REJECTED' || booking.status === 'EXPIRED'"
+                    >
+                      {{ booking.status }}
+                    </span>
+                  </td>
+                  <td>{{ booking.paymentStatus }}</td>
+                  <td><a class="btn btn--outline btn--sm" [routerLink]="['/bookings', booking.id]">Voir</a></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <app-pagination [pagination]="pagination()" (pageChange)="onPageChange($event)" />
+      }
+    }
+  }
+</section>

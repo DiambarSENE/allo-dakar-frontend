@@ -1,0 +1,27 @@
+@use '../../../../../styles/tokens' as t;
+
+.trip-search {
+  padding-block: t.$space-6;
+}
+
+.trip-search__results {
+  margin-top: t.$space-6;
+}
+
+.trip-search__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: t.$space-5;
+}
+
+@media (max-width: t.$breakpoint-lg) {
+  .trip-search__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: t.$breakpoint-md) {
+  .trip-search__grid {
+    grid-template-columns: 1fr;
+  }
+}

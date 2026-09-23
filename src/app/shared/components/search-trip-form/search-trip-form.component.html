@@ -1,0 +1,66 @@
+<form class="search-form" [class.search-form--compact]="compact()" [formGroup]="form" (ngSubmit)="submit()">
+  <div class="search-form__row">
+    <div class="form-field">
+      <label class="form-label" for="departureCity">Ville de départ</label>
+      <input
+        id="departureCity"
+        class="form-control"
+        type="text"
+        formControlName="departureCity"
+        placeholder="Dakar"
+        autocomplete="off"
+      />
+    </div>
+
+    <div class="form-field">
+      <label class="form-label" for="destinationCity">Destination</label>
+      <input
+        id="destinationCity"
+        class="form-control"
+        type="text"
+        formControlName="destinationCity"
+        placeholder="Thiès"
+        autocomplete="off"
+      />
+    </div>
+
+    <div class="form-field">
+      <label class="form-label" for="departureDate">Date</label>
+      <input
+        id="departureDate"
+        class="form-control"
+        type="date"
+        formControlName="departureDate"
+        [attr.aria-invalid]="form.get('departureDate')?.invalid && form.get('departureDate')?.touched"
+      />
+      @if (form.get('departureDate')?.hasError('pastDate') && form.get('departureDate')?.touched) {
+        <span class="form-error">La date ne peut pas être dans le passé.</span>
+      }
+    </div>
+  </div>
+
+  @if (!compact()) {
+    <div class="search-form__row">
+      <div class="form-field">
+        <label class="form-label" for="minPrice">Prix minimum (FCFA)</label>
+        <input id="minPrice" class="form-control" type="number" min="0" formControlName="minPrice" />
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="maxPrice">Prix maximum (FCFA)</label>
+        <input id="maxPrice" class="form-control" type="number" min="0" formControlName="maxPrice" />
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="minAvailableSeats">Places nécessaires</label>
+        <input id="minAvailableSeats" class="form-control" type="number" min="1" formControlName="minAvailableSeats" />
+      </div>
+    </div>
+
+    @if (form.hasError('priceRange')) {
+      <p class="form-error">Le prix maximum doit être supérieur ou égal au prix minimum.</p>
+    }
+  }
+
+  <button type="submit" class="btn btn--primary search-form__submit">Rechercher</button>
+</form>

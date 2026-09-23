@@ -1,0 +1,119 @@
+@switch (state()) {
+  @case ('loading') {
+    <div class="container">
+      <app-spinner label="Chargement du trajet…" />
+    </div>
+  }
+  @case ('error') {
+    <div class="container">
+      <app-error-state
+        title="Trajet introuvable"
+        message="Ce trajet n'existe plus ou n'est plus accessible."
+      />
+      <a routerLink="/trips" class="btn btn--outline">Retour à la recherche</a>
+    </div>
+  }
+  @case ('success') {
+    @if (trip(); as t) {
+      <section class="container trip-detail">
+        <div class="trip-detail__main card">
+          <div class="trip-detail__header">
+            <h1>{{ t.departureCity }} → {{ t.destinationCity }}</h1>
+            <span
+              class="badge"
+              [class.badge--success]="t.status === 'PUBLISHED'"
+              [class.badge--muted]="t.status === 'DRAFT' || t.status === 'EXPIRED'"
+              [class.badge--danger]="t.status === 'CANCELLED'"
+              [class.badge--info]="t.status === 'IN_PROGRESS' || t.status === 'COMPLETED'"
+              [class.badge--warning]="t.status === 'FULL'"
+            >
+              {{ statusLabel() }}
+            </span>
+          </div>
+
+          <dl class="trip-detail__facts">
+            <div>
+              <dt>Date</dt>
+              <dd>{{ t.departureDate }} à {{ t.departureTime.slice(0, 5) }}</dd>
+            </div>
+            <div>
+              <dt>Point de rencontre</dt>
+              <dd>{{ t.meetingPoint || 'Non précisé' }}</dd>
+            </div>
+            <div>
+              <dt>Véhicule</dt>
+              <dd>{{ t.vehicle.brand }} {{ t.vehicle.model }} ({{ t.vehicle.color || '—' }})</dd>
+            </div>
+            <div>
+              <dt>Places restantes</dt>
+              <dd>{{ t.availableSeats }} / {{ t.totalSeats }}</dd>
+            </div>
+            <div>
+              <dt>Prix par place</dt>
+              <dd class="trip-detail__price">{{ t.pricePerSeat }} FCFA</dd>
+            </div>
+            <div>
+              <dt>Conducteur</dt>
+              <dd>{{ t.driverFullName }}</dd>
+            </div>
+          </dl>
+
+          @if (t.description) {
+            <div>
+              <h2>Description</h2>
+              <p>{{ t.description }}</p>
+            </div>
+          }
+
+          @if (t.rules) {
+            <div>
+              <h2>Règles du trajet</h2>
+              <p>{{ t.rules }}</p>
+            </div>
+          }
+        </div>
+
+        <aside class="trip-detail__booking card">
+          <h2>Réserver</h2>
+
+          @if (conflictMessage()) {
+            <p class="alert alert--warning">{{ conflictMessage() }}</p>
+          }
+
+          @if (!auth.isAuthenticated()) {
+            <p>Connectez-vous pour réserver ce trajet.</p>
+            <button type="button" class="btn btn--primary btn--block" (click)="login()">Se connecter</button>
+          } @else if (!canReserve()) {
+            <p class="form-hint">Ce trajet n'est plus disponible à la réservation.</p>
+          } @else {
+            <form [formGroup]="bookingForm" (ngSubmit)="reserve()">
+              <div class="form-field">
+                <label class="form-label" for="numberOfSeats">Nombre de places</label>
+                <input
+                  id="numberOfSeats"
+                  class="form-control"
+                  type="number"
+                  min="1"
+                  [max]="t.availableSeats"
+                  formControlName="numberOfSeats"
+                />
+                @if (bookingForm.get('numberOfSeats')?.invalid && bookingForm.get('numberOfSeats')?.touched) {
+                  <span class="form-error">Indiquez un nombre de places valide (maximum {{ t.availableSeats }}).</span>
+                }
+              </div>
+
+              <p class="trip-detail__total">
+                Total :
+                <strong>{{ (bookingForm.value.numberOfSeats || 0) * t.pricePerSeat }} FCFA</strong>
+              </p>
+
+              <button type="submit" class="btn btn--primary btn--block" [disabled]="submitting()">
+                {{ submitting() ? 'Réservation en cours…' : 'Réserver' }}
+              </button>
+            </form>
+          }
+        </aside>
+      </section>
+    }
+  }
+}

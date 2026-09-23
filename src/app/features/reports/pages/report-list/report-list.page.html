@@ -1,0 +1,54 @@
+<section class="container" style="padding-block: 2rem;">
+  <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap: wrap; gap: 1rem;">
+    <h1 style="margin:0;">Mes signalements</h1>
+    <a class="btn btn--primary" routerLink="/reports/new">Nouveau signalement</a>
+  </div>
+
+  @switch (state()) {
+    @case ('loading') {
+      <app-spinner label="Chargement de vos signalements…" />
+    }
+    @case ('error') {
+      <app-error-state title="Impossible de charger vos signalements" (retry)="retry()" />
+    }
+    @case ('success') {
+      @if (reports().length === 0) {
+        <app-empty-state title="Vous n'avez soumis aucun signalement" />
+      } @else {
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Motif</th>
+                <th>Description</th>
+                <th>Statut</th>
+                <th>Résolution</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (r of reports(); track r.id) {
+                <tr>
+                  <td>{{ r.reason }}</td>
+                  <td>{{ r.description || '—' }}</td>
+                  <td>
+                    <span
+                      class="badge"
+                      [class.badge--success]="r.status === 'RESOLVED'"
+                      [class.badge--warning]="r.status === 'OPEN' || r.status === 'UNDER_REVIEW'"
+                      [class.badge--danger]="r.status === 'REJECTED'"
+                      [class.badge--muted]="r.status === 'CLOSED'"
+                    >
+                      {{ r.status }}
+                    </span>
+                  </td>
+                  <td>{{ r.resolution || '—' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <app-pagination [pagination]="pagination()" (pageChange)="onPageChange($event)" />
+      }
+    }
+  }
+</section>

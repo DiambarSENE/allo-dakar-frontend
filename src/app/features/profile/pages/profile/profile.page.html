@@ -1,0 +1,49 @@
+<section class="container" style="padding-block: 2rem; max-width: 560px;">
+  <h1>Mon profil</h1>
+
+  @if (state() === 'loading') {
+    <app-spinner label="Chargement de votre profil…" />
+  } @else if (state() === 'error') {
+    <div class="alert alert--danger" role="alert">Impossible de charger votre profil pour le moment.</div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="save()">
+      <div class="form-field">
+        <label class="form-label" for="firstName">Prénom</label>
+        <input
+          id="firstName"
+          class="form-control"
+          type="text"
+          formControlName="firstName"
+          [attr.aria-invalid]="form.get('firstName')?.invalid && form.get('firstName')?.touched"
+        />
+        @if (form.get('firstName')?.hasError('required') && form.get('firstName')?.touched) {
+          <span class="form-error">Le prénom est obligatoire.</span>
+        }
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="lastName">Nom</label>
+        <input
+          id="lastName"
+          class="form-control"
+          type="text"
+          formControlName="lastName"
+          [attr.aria-invalid]="form.get('lastName')?.invalid && form.get('lastName')?.touched"
+        />
+        @if (form.get('lastName')?.hasError('required') && form.get('lastName')?.touched) {
+          <span class="form-error">Le nom est obligatoire.</span>
+        }
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="phone">Téléphone</label>
+        <input id="phone" class="form-control" type="tel" formControlName="phone" placeholder="77 123 45 67" />
+        <span class="form-hint">L'email et le mot de passe se gèrent depuis votre compte Keycloak.</span>
+      </div>
+
+      <button type="submit" class="btn btn--primary" [disabled]="saving()">
+        {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
+      </button>
+    </form>
+  }
+</section>

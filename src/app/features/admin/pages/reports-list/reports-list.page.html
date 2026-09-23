@@ -1,0 +1,60 @@
+<h1>Signalements</h1>
+
+@switch (state()) {
+  @case ('loading') {
+    <app-spinner label="Chargement des signalements…" />
+  }
+  @case ('error') {
+    <app-error-state title="Impossible de charger les signalements" (retry)="retry()" />
+  }
+  @case ('success') {
+    @if (reports().length === 0) {
+      <app-empty-state title="Aucun signalement" />
+    } @else {
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Motif</th>
+              <th>Description</th>
+              <th>Statut</th>
+              <th>Résolution</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of reports(); track r.id) {
+              <tr>
+                <td>{{ r.reason }}</td>
+                <td>{{ r.description || '—' }}</td>
+                <td>
+                  <span
+                    class="badge"
+                    [class.badge--success]="r.status === 'RESOLVED'"
+                    [class.badge--warning]="r.status === 'OPEN' || r.status === 'UNDER_REVIEW'"
+                    [class.badge--danger]="r.status === 'REJECTED'"
+                    [class.badge--muted]="r.status === 'CLOSED'"
+                  >
+                    {{ r.status }}
+                  </span>
+                </td>
+                <td>{{ r.resolution || '—' }}</td>
+                <td style="display:flex; gap:0.4rem; flex-wrap: wrap;">
+                  @if (isOpen(r)) {
+                    <button type="button" class="btn btn--primary btn--sm" [disabled]="actingOnId() === r.id" (click)="resolve(r)">
+                      Résoudre
+                    </button>
+                    <button type="button" class="btn btn--danger btn--sm" [disabled]="actingOnId() === r.id" (click)="reject(r)">
+                      Rejeter
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <app-pagination [pagination]="pagination()" (pageChange)="onPageChange($event)" />
+    }
+  }
+}

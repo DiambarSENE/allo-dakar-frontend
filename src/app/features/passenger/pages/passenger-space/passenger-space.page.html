@@ -1,0 +1,60 @@
+<section class="container passenger-space">
+  <h1>Mon espace passager</h1>
+
+  <div class="card passenger-space__next">
+    <h2>Prochaine réservation</h2>
+    @if (loading()) {
+      <app-spinner label="Chargement…" />
+    } @else if (nextBooking(); as b) {
+      <p class="passenger-space__trip">{{ b.trip.departureCity }} → {{ b.trip.destinationCity }}</p>
+      <p class="passenger-space__meta">{{ b.trip.departureDate }} à {{ b.trip.departureTime.slice(0, 5) }} — {{ b.numberOfSeats }} place(s)</p>
+      <a class="btn btn--primary btn--sm" [routerLink]="['/bookings', b.id]">Voir le détail</a>
+    } @else {
+      <p class="form-hint">Aucune réservation à venir.</p>
+      <a class="btn btn--primary btn--sm" routerLink="/trips">Rechercher un trajet</a>
+    }
+  </div>
+
+  <div class="passenger-space__grid">
+    <a class="card card--interactive passenger-space__tile" routerLink="/passenger/bookings">
+      <h2>Mes réservations</h2>
+      <p>Historique complet, à venir et terminées.</p>
+    </a>
+    <a class="card card--interactive passenger-space__tile" routerLink="/payments">
+      <h2>Mes paiements</h2>
+      <p>Suivez le statut de vos paiements de réservation.</p>
+    </a>
+    <a class="card card--interactive passenger-space__tile" routerLink="/notifications">
+      <h2>Notifications</h2>
+      <p>Confirmations, annulations, réponses à vos signalements.</p>
+    </a>
+    <a class="card card--interactive passenger-space__tile" routerLink="/reports">
+      <h2>Mes signalements</h2>
+      <p>Suivez le traitement de vos signalements.</p>
+    </a>
+    <a class="card card--interactive passenger-space__tile" routerLink="/profile">
+      <h2>Mon profil</h2>
+      <p>Modifiez vos informations personnelles.</p>
+    </a>
+  </div>
+
+  <div class="card passenger-space__reviews">
+    <h2>Derniers avis reçus</h2>
+    @if (reviewsLoading()) {
+      <app-spinner label="Chargement…" />
+    } @else if (reviews().length === 0) {
+      <p class="form-hint">Vous n'avez pas encore reçu d'avis.</p>
+    } @else {
+      <ul class="passenger-space__review-list">
+        @for (r of reviews(); track r.id) {
+          <li class="passenger-space__review">
+            <app-rating-stars [value]="r.rating" />
+            @if (r.comment) {
+              <p>{{ r.comment }}</p>
+            }
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</section>

@@ -1,0 +1,49 @@
+<h1>Paiements</h1>
+
+@switch (state()) {
+  @case ('loading') {
+    <app-spinner label="Chargement des paiements…" />
+  }
+  @case ('error') {
+    <app-error-state title="Impossible de charger les paiements" (retry)="retry()" />
+  }
+  @case ('success') {
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Référence</th>
+            <th>Montant</th>
+            <th>Méthode</th>
+            <th>Statut</th>
+            <th>Payé le</th>
+            <th>Motif d'échec</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of payments(); track p.id) {
+            <tr>
+              <td>{{ p.paymentReference }}</td>
+              <td>{{ p.amount }} {{ p.currency }}</td>
+              <td>{{ p.paymentMethod }}</td>
+              <td>
+                <span
+                  class="badge"
+                  [class.badge--success]="p.status === 'SUCCESS'"
+                  [class.badge--danger]="p.status === 'FAILED' || p.status === 'CANCELLED'"
+                  [class.badge--warning]="p.status === 'PENDING' || p.status === 'PROCESSING'"
+                  [class.badge--muted]="p.status === 'REFUNDED'"
+                >
+                  {{ p.status }}
+                </span>
+              </td>
+              <td>{{ p.paidAt ? (p.paidAt | date: 'medium') : '—' }}</td>
+              <td>{{ p.failureReason || '—' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <app-pagination [pagination]="pagination()" (pageChange)="onPageChange($event)" />
+  }
+}

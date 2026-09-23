@@ -1,0 +1,36 @@
+@use '../../../../styles/tokens' as t;
+
+.search-form {
+  background: t.$color-surface;
+  border-radius: t.$radius-lg;
+  padding: t.$space-5;
+  box-shadow: t.$shadow-md;
+}
+
+.search-form__row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: t.$space-4;
+}
+
+.search-form__submit {
+  margin-top: t.$space-2;
+  width: 100%;
+}
+
+.search-form--compact {
+  padding: t.$space-4;
+}
+
+@media (max-width: t.$breakpoint-md) {
+  .search-form__row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: t.$breakpoint-lg) {
+  .search-form__submit {
+    width: auto;
+    padding-inline: t.$space-8;
+  }
+}

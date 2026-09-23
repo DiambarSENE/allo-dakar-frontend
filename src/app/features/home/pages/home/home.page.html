@@ -1,0 +1,63 @@
+<section class="hero">
+  <div class="container hero__inner">
+    <div class="hero__copy">
+      <h1>Covoiturez partout au Sénégal, en toute confiance.</h1>
+      <p class="hero__subtitle">
+        Allo Dakar met en relation conducteurs et passagers pour des trajets sûrs, abordables et
+        vérifiés — à Dakar comme dans les autres régions.
+      </p>
+    </div>
+    <app-search-trip-form [compact]="true" (search)="onSearch($event)" />
+  </div>
+</section>
+
+<section class="how-it-works">
+  <div class="container">
+    <h2>Comment fonctionne Allo Dakar ?</h2>
+    <div class="how-it-works__grid">
+      <div class="how-it-works__step">
+        <span class="how-it-works__number">1</span>
+        <h3>Recherchez</h3>
+        <p>Indiquez votre ville de départ, votre destination et la date de votre trajet.</p>
+      </div>
+      <div class="how-it-works__step">
+        <span class="how-it-works__number">2</span>
+        <h3>Réservez</h3>
+        <p>Choisissez un trajet, réservez vos places et payez en toute sécurité.</p>
+      </div>
+      <div class="how-it-works__step">
+        <span class="how-it-works__number">3</span>
+        <h3>Voyagez</h3>
+        <p>Retrouvez votre conducteur au point de rencontre indiqué et profitez du trajet.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="advantages">
+  <div class="container advantages__grid">
+    <div class="card">
+      <h3>Pour les passagers</h3>
+      <p>Des trajets à prix abordable, avec des conducteurs dont le profil est vérifié.</p>
+    </div>
+    <div class="card">
+      <h3>Pour les conducteurs</h3>
+      <p>Publiez vos trajets, gérez vos réservations et vos revenus depuis votre espace dédié.</p>
+    </div>
+    <div class="card">
+      <h3>Sécurité &amp; vérification</h3>
+      <p>
+        Chaque conducteur passe par un processus de vérification de documents avant de pouvoir
+        publier un trajet.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="container cta__inner">
+    <h2>Prêt à partir ?</h2>
+    <p>Trouvez votre prochain trajet en quelques secondes.</p>
+    <a routerLink="/trips" class="btn btn--primary">Rechercher un trajet</a>
+  </div>
+</section>

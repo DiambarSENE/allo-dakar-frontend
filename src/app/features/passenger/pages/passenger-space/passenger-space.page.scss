@@ -1,0 +1,68 @@
+:host {
+  display: block;
+}
+
+.passenger-space {
+  padding-block: 2rem;
+}
+
+.passenger-space__next {
+  margin-bottom: 1.5rem;
+}
+
+.passenger-space__trip {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin: 0.5rem 0 0.15rem;
+}
+
+.passenger-space__meta {
+  margin: 0 0 0.75rem;
+  color: var(--color-muted, #6b7280);
+  font-size: 0.88rem;
+}
+
+.passenger-space__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.passenger-space__tile h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+}
+
+.passenger-space__tile p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-muted, #6b7280);
+}
+
+.passenger-space__reviews {
+  margin-top: 1.5rem;
+}
+
+.passenger-space__review-list {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.passenger-space__review {
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--color-border, #e5e1d8);
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  p {
+    margin: 0.35rem 0 0;
+    font-size: 0.88rem;
+  }
+}

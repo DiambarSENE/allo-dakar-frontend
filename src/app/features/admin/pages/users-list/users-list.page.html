@@ -1,0 +1,60 @@
+<h1>Utilisateurs</h1>
+
+@switch (state()) {
+  @case ('loading') {
+    <app-spinner label="Chargement des utilisateurs…" />
+  }
+  @case ('error') {
+    <app-error-state title="Impossible de charger les utilisateurs" (retry)="retry()" />
+  }
+  @case ('success') {
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Téléphone</th>
+            <th>Rôles</th>
+            <th>Statut</th>
+            <th>Inscription vérifiée</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (u of users(); track u.id) {
+            <tr>
+              <td>{{ u.firstName }} {{ u.lastName }}</td>
+              <td>{{ u.email }}</td>
+              <td>{{ u.phone || '—' }}</td>
+              <td>{{ u.roles.join(', ') }}</td>
+              <td>
+                <span
+                  class="badge"
+                  [class.badge--success]="u.status === 'ACTIVE'"
+                  [class.badge--danger]="u.status === 'SUSPENDED' || u.status === 'BANNED'"
+                  [class.badge--muted]="u.status === 'PENDING' || u.status === 'INACTIVE'"
+                >
+                  {{ u.status }}
+                </span>
+              </td>
+              <td>{{ u.emailVerified ? 'Oui' : 'Non' }}</td>
+              <td>
+                @if (u.status === 'ACTIVE') {
+                  <button type="button" class="btn btn--danger btn--sm" [disabled]="actingOnId() === u.id" (click)="suspend(u)">
+                    Suspendre
+                  </button>
+                } @else if (u.status === 'SUSPENDED') {
+                  <button type="button" class="btn btn--outline btn--sm" [disabled]="actingOnId() === u.id" (click)="activate(u)">
+                    Réactiver
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <app-pagination [pagination]="pagination()" (pageChange)="onPageChange($event)" />
+  }
+}

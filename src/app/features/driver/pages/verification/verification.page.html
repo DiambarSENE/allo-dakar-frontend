@@ -1,0 +1,46 @@
+<section class="container" style="padding-block: 2rem; max-width: 600px;">
+  <h1>Vérification conducteur</h1>
+
+  @if (loading()) {
+    <app-spinner label="Chargement de votre statut…" />
+  } @else {
+    @if (profile(); as p) {
+      <div class="alert" [class.alert--success]="p.verificationStatus === 'VERIFIED'"
+           [class.alert--warning]="p.verificationStatus === 'PENDING' || p.verificationStatus === 'UNDER_REVIEW'"
+           [class.alert--danger]="p.verificationStatus === 'REJECTED'"
+           [class.alert--info]="p.verificationStatus === 'REQUIRES_MORE_INFORMATION'"
+      >
+        Statut actuel : <strong>{{ statusLabels[p.verificationStatus] }}</strong>
+      </div>
+    }
+
+    <h2>Soumettre un document</h2>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-field">
+        <label class="form-label" for="documentType">Type de document</label>
+        <select id="documentType" class="form-control" formControlName="documentType">
+          @for (type of documentTypes; track type) {
+            <option [value]="type">{{ type }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="documentNumber">Numéro de document (optionnel)</label>
+        <input id="documentNumber" class="form-control" type="text" formControlName="documentNumber" />
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="documentUrl">Lien vers le document</label>
+        <input id="documentUrl" class="form-control" type="url" formControlName="documentUrl" placeholder="https://…" />
+        <span class="form-hint">
+          Hébergez votre document (photo ou scan) sur un service de votre choix et collez le lien ici.
+        </span>
+      </div>
+
+      <button type="submit" class="btn btn--primary" [disabled]="submitting()">
+        {{ submitting() ? 'Envoi…' : 'Soumettre' }}
+      </button>
+    </form>
+  }
+</section>

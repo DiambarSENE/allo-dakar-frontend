@@ -1,0 +1,56 @@
+<section class="container" style="padding-block: 2rem;">
+  <h1>Réservations reçues</h1>
+
+  @switch (state()) {
+    @case ('loading') {
+      <app-spinner label="Chargement des réservations…" />
+    }
+    @case ('error') {
+      <app-error-state title="Impossible de charger les réservations" (retry)="retry()" />
+    }
+    @case ('success') {
+      @if (bookings().length === 0) {
+        <app-empty-state title="Aucune réservation reçue pour le moment" />
+      } @else {
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Référence</th>
+                <th>Trajet</th>
+                <th>Date</th>
+                <th>Places</th>
+                <th>Montant</th>
+                <th>Statut</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (b of bookings(); track b.id) {
+                <tr>
+                  <td>{{ b.bookingReference }}</td>
+                  <td>{{ b.trip.departureCity }} → {{ b.trip.destinationCity }}</td>
+                  <td>{{ b.trip.departureDate }}</td>
+                  <td>{{ b.numberOfSeats }}</td>
+                  <td>{{ b.totalAmount }} FCFA</td>
+                  <td>
+                    <span
+                      class="badge"
+                      [class.badge--success]="b.status === 'CONFIRMED' || b.status === 'COMPLETED'"
+                      [class.badge--warning]="b.status === 'PENDING'"
+                      [class.badge--danger]="b.status === 'CANCELLED' || b.status === 'REJECTED' || b.status === 'EXPIRED'"
+                    >
+                      {{ b.status }}
+                    </span>
+                  </td>
+                  <td><a class="btn btn--outline btn--sm" [routerLink]="['/bookings', b.id]">Voir</a></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <app-pagination [pagination]="pagination()" (pageChange)="onPageChange($event)" />
+      }
+    }
+  }
+</section>

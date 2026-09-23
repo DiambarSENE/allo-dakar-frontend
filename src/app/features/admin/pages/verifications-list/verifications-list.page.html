@@ -1,0 +1,53 @@
+<h1>Vérifications conducteurs</h1>
+
+@switch (state()) {
+  @case ('loading') {
+    <app-spinner label="Chargement des vérifications…" />
+  }
+  @case ('error') {
+    <app-error-state title="Impossible de charger les vérifications" (retry)="retry()" />
+  }
+  @case ('success') {
+    @if (verifications().length === 0) {
+      <app-empty-state title="Aucune vérification en attente" />
+    } @else {
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID conducteur</th>
+              <th>Type de document</th>
+              <th>Statut</th>
+              <th>Soumis le</th>
+              <th>Motif de rejet</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (v of verifications(); track v.id) {
+              <tr>
+                <td style="font-family: monospace; font-size: 0.78rem;">{{ v.driverId }}</td>
+                <td>{{ v.documentType }}</td>
+                <td>{{ v.status }}</td>
+                <td>{{ v.submittedAt | date: 'medium' }}</td>
+                <td>{{ v.rejectionReason || '—' }}</td>
+                <td style="display:flex; gap:0.4rem; flex-wrap: wrap;">
+                  <button type="button" class="btn btn--primary btn--sm" [disabled]="actingOnId() === v.id" (click)="approve(v)">
+                    Approuver
+                  </button>
+                  <button type="button" class="btn btn--outline btn--sm" [disabled]="actingOnId() === v.id" (click)="requireMoreInfo(v)">
+                    Demander un complément
+                  </button>
+                  <button type="button" class="btn btn--danger btn--sm" [disabled]="actingOnId() === v.id" (click)="reject(v)">
+                    Rejeter
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <app-pagination [pagination]="pagination()" (pageChange)="onPageChange($event)" />
+    }
+  }
+}

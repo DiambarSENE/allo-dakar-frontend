@@ -1,0 +1,63 @@
+<a class="visually-hidden" href="#main-content">Aller au contenu principal</a>
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a routerLink="/" class="site-header__logo" (click)="closeMenu()">
+      Allo<span>Dakar</span>
+    </a>
+
+    <button
+      type="button"
+      class="site-header__menu-toggle"
+      (click)="toggleMenu()"
+      [attr.aria-expanded]="menuOpen()"
+      aria-controls="primary-nav"
+      aria-label="Ouvrir le menu"
+    >
+      ☰
+    </button>
+
+    <nav id="primary-nav" class="site-header__nav" [class.site-header__nav--open]="menuOpen()">
+      <a routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMenu()">Accueil</a>
+      <a routerLink="/trips" routerLinkActive="is-active" (click)="closeMenu()">Rechercher un trajet</a>
+
+      @if (auth.isAuthenticated()) {
+        @if (auth.isDriver()) {
+          <a routerLink="/driver" routerLinkActive="is-active" (click)="closeMenu()">Espace conducteur</a>
+        }
+        @if (auth.isPassenger()) {
+          <a routerLink="/passenger" routerLinkActive="is-active" (click)="closeMenu()">Mon espace</a>
+        }
+        @if (auth.isAdmin()) {
+          <a routerLink="/admin" routerLinkActive="is-active" (click)="closeMenu()">Administration</a>
+        }
+        @if (auth.isCustomerService()) {
+          <a routerLink="/customer-service" routerLinkActive="is-active" (click)="closeMenu()">Service client</a>
+        }
+        <span class="site-header__user">{{ auth.fullName() }}</span>
+        <button type="button" class="btn btn--outline btn--sm" (click)="logout()">Déconnexion</button>
+      } @else {
+        <button type="button" class="btn btn--ghost btn--sm" (click)="login()">Connexion</button>
+        <button type="button" class="btn btn--primary btn--sm" (click)="register()">Créer un compte</button>
+      }
+    </nav>
+  </div>
+</header>
+
+<main id="main-content">
+  <router-outlet />
+</main>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <p class="site-footer__brand">AlloDakar</p>
+      <p>Covoiturage sûr et abordable, partout au Sénégal.</p>
+    </div>
+    <div class="site-footer__links">
+      <a routerLink="/trips">Rechercher un trajet</a>
+      <a routerLink="/driver/verification">Devenir conducteur vérifié</a>
+    </div>
+    <p class="site-footer__copyright">&copy; {{ currentYear }} Allo Dakar. Tous droits réservés.</p>
+  </div>
+</footer>

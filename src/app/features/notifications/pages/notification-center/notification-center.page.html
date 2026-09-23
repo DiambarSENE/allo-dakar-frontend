@@ -1,0 +1,38 @@
+<section class="container" style="padding-block: 2rem; max-width: 720px;">
+  <h1>Notifications</h1>
+
+  @switch (state()) {
+    @case ('loading') {
+      <app-spinner label="Chargement de vos notifications…" />
+    }
+    @case ('error') {
+      <app-error-state title="Impossible de charger vos notifications" (retry)="retry()" />
+    }
+    @case ('success') {
+      @if (notifications().length === 0) {
+        <app-empty-state title="Aucune notification" description="Vous serez averti ici des mises à jour importantes (réservations, paiements, vérification…)." />
+      } @else {
+        <ul class="notification-list">
+          @for (n of notifications(); track n.id) {
+            <li
+              class="card notification-item"
+              [class.notification-item--unread]="n.status !== 'READ'"
+              (click)="markRead(n)"
+            >
+              <div>
+                <span class="badge badge--primary">{{ typeLabels[n.type] ?? n.type }}</span>
+                @if (n.status !== 'READ') {
+                  <span class="badge badge--info" style="margin-left: 0.4rem;">Non lu</span>
+                }
+                <p class="notification-item__title">{{ n.title }}</p>
+                <p class="notification-item__message">{{ n.message }}</p>
+                <p class="notification-item__date">{{ n.createdAt | date: 'medium' }}</p>
+              </div>
+            </li>
+          }
+        </ul>
+        <app-pagination [pagination]="pagination()" (pageChange)="onPageChange($event)" />
+      }
+    }
+  }
+</section>

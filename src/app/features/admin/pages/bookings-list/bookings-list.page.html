@@ -1,0 +1,41 @@
+<h1>Réservations</h1>
+
+@switch (state()) {
+  @case ('loading') {
+    <app-spinner label="Chargement des réservations…" />
+  }
+  @case ('error') {
+    <app-error-state title="Impossible de charger les réservations" (retry)="retry()" />
+  }
+  @case ('success') {
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Référence</th>
+            <th>Trajet</th>
+            <th>Date</th>
+            <th>Places</th>
+            <th>Montant</th>
+            <th>Statut</th>
+            <th>Paiement</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (b of bookings(); track b.id) {
+            <tr>
+              <td>{{ b.bookingReference }}</td>
+              <td>{{ b.trip.departureCity }} → {{ b.trip.destinationCity }}</td>
+              <td>{{ b.trip.departureDate }}</td>
+              <td>{{ b.numberOfSeats }}</td>
+              <td>{{ b.totalAmount }} FCFA</td>
+              <td><span class="badge badge--muted">{{ b.status }}</span></td>
+              <td>{{ b.paymentStatus }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <app-pagination [pagination]="pagination()" (pageChange)="onPageChange($event)" />
+  }
+}
