@@ -1,0 +1,129 @@
+@use 'tokens' as t;
+
+// Coque de navigation (barre latérale + barre du haut) partagée par les trois layouts
+// authentifiés ; seule la couleur d'accentuation change selon l'espace.
+@mixin shell($accent) {
+  .app-shell { display: flex; min-height: 100dvh; background: t.$color-background; }
+
+  .sidebar {
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    width: 272px;
+    height: 100dvh;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: t.$space-4;
+    padding: t.$space-5 t.$space-4 t.$space-4;
+    color: rgba(255, 255, 255, 0.8);
+    background: linear-gradient(180deg, #1f2a24 0%, #141c18 100%);
+    overflow-y: auto;
+  }
+
+  .sidebar__brand {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 t.$space-2 t.$space-2;
+    font-weight: 800; font-size: 1.2rem; color: #fff; letter-spacing: -0.01em;
+    span { color: #{$accent}; }
+    small { margin-left: 2px; padding: 2px 8px; border-radius: 999px; background: rgba(255,255,255,.12); font-size: .65rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.8); }
+  }
+  .sidebar__logo { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 11px; color: #fff; background: #{$accent}; box-shadow: 0 6px 14px rgba(0,0,0,.3); font-size: 1.15rem; }
+
+  .sidebar__nav {
+    display: flex; flex-direction: column; gap: 2px; flex: 1;
+    a {
+      position: relative;
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px t.$space-3;
+      border-radius: t.$radius-md;
+      color: rgba(255, 255, 255, 0.72);
+      font-weight: 500; font-size: 0.9rem;
+      transition: background 0.15s, color 0.15s;
+      app-icon { font-size: 1.15rem; opacity: 0.85; }
+      &:hover { background: rgba(255, 255, 255, 0.07); color: #fff; text-decoration: none; }
+      &.is-active {
+        color: #fff; font-weight: 600;
+        background: color-mix(in srgb, #{$accent} 30%, transparent);
+        &::before { content: ''; position: absolute; left: -16px; top: 8px; bottom: 8px; width: 4px; border-radius: 0 4px 4px 0; background: #{$accent}; }
+        app-icon { opacity: 1; color: #{$accent}; filter: brightness(1.35); }
+      }
+    }
+  }
+
+  .sidebar__section { margin: t.$space-3 0 4px; padding: 0 t.$space-3; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255, 255, 255, 0.4); }
+
+  .bottom-nav { display: none; }
+
+  .sidebar__foot { display: grid; gap: t.$space-3; padding-top: t.$space-3; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+  .sidebar__public-link { display: flex; align-items: center; gap: 10px; padding: 6px t.$space-3; font-size: .85rem; color: rgba(255,255,255,.6); &:hover { color: #fff; text-decoration: none; } }
+
+  .sidebar__user { display: flex; align-items: center; gap: 10px; padding: 8px t.$space-2;
+    .avatar { background: #{$accent}; color: #fff; }
+    strong { display: block; color: #fff; font-size: .88rem; line-height: 1.2; }
+    small { color: rgba(255,255,255,.55); font-size: .75rem; } }
+  .sidebar__who { min-width: 0; strong, small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; } }
+
+  .sidebar__logout {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    border-color: rgba(255, 255, 255, 0.22); color: #fff; background: transparent;
+    &:hover { border-color: #{$accent}; color: #{$accent}; background: rgba(255,255,255,.04); }
+  }
+
+  .app-shell__main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+  .app-shell__topbar {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; gap: t.$space-4;
+    padding: t.$space-3 t.$space-5;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid t.$color-border;
+  }
+  .app-shell__menu-toggle {
+    display: none; place-items: center; width: 40px; height: 40px;
+    background: t.$color-surface; border: 1px solid t.$color-border; border-radius: t.$radius-md; font-size: 1.2rem; cursor: pointer; color: t.$color-text;
+  }
+  .app-shell__home-link { display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; color: t.$color-muted; &:hover { color: t.$color-text; text-decoration: none; } }
+  .app-shell__user { margin-left: auto; display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 0.88rem; color: t.$color-text;
+    .avatar { width: 34px; height: 34px; font-size: .75rem; background: color-mix(in srgb, #{$accent} 16%, white); color: #{$accent}; } }
+  .app-shell__content { flex: 1; padding: t.$space-5; }
+  .sidebar__scrim { display: none; }
+
+  @media (max-width: t.$breakpoint-lg) {
+    .app-shell__menu-toggle { display: grid; }
+    .sidebar {
+      position: fixed; inset: 0 auto 0 0; z-index: 200; height: 100dvh;
+      transform: translateX(-100%); transition: transform 0.22s ease;
+      &--open { transform: translateX(0); box-shadow: 0 0 40px rgba(0,0,0,.35); }
+    }
+    .sidebar__scrim { display: block; position: fixed; inset: 0; z-index: 150; background: rgba(20, 28, 24, 0.5); border: 0; }
+    .app-shell__content { padding: t.$space-4; }
+    .app-shell__user span { display: none; }
+  }
+  @media (max-width: t.$breakpoint-lg) {
+    .bottom-nav {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 120;
+      display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; align-items: end;
+      padding: 6px 6px calc(6px + env(safe-area-inset-bottom));
+      background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(8px);
+      border-top: 1px solid t.$color-border; box-shadow: 0 -8px 24px rgba(31, 42, 36, 0.08);
+      a {
+        display: flex; flex-direction: column; align-items: center; gap: 2px;
+        padding: 6px 2px; border-radius: 12px; color: t.$color-muted; font-size: 0.68rem; font-weight: 600;
+        app-icon { font-size: 1.4rem; }
+        &:hover { text-decoration: none; color: t.$color-text; }
+        &.is-active { color: #{$accent}; }
+      }
+      .bottom-nav__cta {
+        color: #fff; margin-top: -18px;
+        app-icon { display: grid; place-items: center; box-sizing: content-box; width: 1.4rem; height: 1.4rem; padding: 0.7rem; border-radius: 50%; background: #{$accent}; box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25); }
+        span { color: t.$color-muted; }
+        &.is-active span { color: #{$accent}; }
+        &.is-active { color: #fff; }
+      }
+    }
+    .app-shell__content { padding-bottom: 6rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { .sidebar { transition: none; } }
+}

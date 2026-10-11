@@ -1,0 +1,57 @@
+<section class="search-hero">
+  <div class="container">
+    <span class="search-hero__eyebrow"><app-icon name="route" /> Allo Dakar · Les départs</span>
+    <h1>Trouvez votre prochain trajet</h1>
+    <p>Comparez les départs partout au Sénégal et réservez votre place en quelques clics.</p>
+  </div>
+</section>
+
+<div class="container search-hero__bar">
+  <app-search-trip-form [inline]="true" [initialValue]="currentCriteria()" (search)="onSearch($event)" />
+  <div class="search-chips" aria-label="Trajets populaires">
+    <span>Populaires :</span>
+    @for (r of popular; track r.destinationCity) {
+      <button type="button" (click)="quickSearch(r.destinationCity)">Dakar → {{ r.destinationCity }}</button>
+    }
+  </div>
+</div>
+
+<section class="container trip-search">
+  <div class="fee-banner" role="note">
+    <app-icon name="wallet" />
+    <span>
+      <strong>Un tarif clair :</strong> le prix par place est fixé par le conducteur, auquel s'ajoutent
+      <strong>{{ pricing.reservationFee() | number: '1.0-0' }} FCFA de frais de réservation</strong>, facturés une seule fois par réservation.
+    </span>
+  </div>
+
+  <div class="trip-search__results-heading">
+    <div>
+      <h2>Trajets disponibles</h2>
+      <p>Des départs à découvrir, selon vos critères.</p>
+    </div>
+    <div class="trip-search__head-actions">
+      @if (state() === 'success') { <span class="trip-search__count">{{ pagination().totalElements }} résultat(s)</span> }
+      <a routerLink="/driver/trips/new" class="btn btn--outline btn--sm"><app-icon name="plus" /> Annoncer un départ</a>
+    </div>
+  </div>
+
+  <section aria-label="Liste des trajets">
+    @switch (state()) {
+      @case ('loading') { <app-spinner label="Recherche des trajets en cours…" /> }
+      @case ('error') {
+        <app-error-state title="Impossible de récupérer les trajets" message="Vérifiez votre connexion puis réessayez." (retry)="retry()" />
+      }
+      @case ('success') {
+        @if (trips().length === 0) {
+          <app-empty-state title="Aucun trajet trouvé" description="Essayez d'élargir vos critères de recherche (dates, ville)." />
+        } @else {
+          <div class="trip-search__grid">
+            @for (trip of trips(); track trip.id) { <app-trip-card [trip]="trip" /> }
+          </div>
+          <app-pagination [pagination]="pagination()" (pageChange)="onPageChange($event)" />
+        }
+      }
+    }
+  </section>
+</section>

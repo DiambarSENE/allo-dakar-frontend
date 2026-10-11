@@ -1,0 +1,151 @@
+<section class="container form-page">
+  <div class="form-head">
+    <div>
+      <h1>{{ isEdit() ? 'Modifier le trajet' : 'Publier un trajet' }}</h1>
+      <p>{{ isEdit() ? 'Mettez à jour les informations de votre trajet.' : 'Renseignez votre itinéraire, vos horaires et vos places. Le trajet est créé en brouillon puis publié depuis « Mes trajets ».' }}</p>
+    </div>
+  </div>
+
+  @if (loadingVehicles()) {
+    <app-spinner label="Chargement de vos véhicules…" />
+  } @else if (vehicles().length === 0 && !isEdit()) {
+    <div class="alert alert--warning" role="alert">
+      Vous devez d'abord ajouter un véhicule avant de publier un trajet.
+      <a routerLink="/driver/vehicles">Ajouter un véhicule</a>
+    </div>
+  } @else {
+    <div class="ticket ticket--teal" style="margin-bottom: 1.25rem;" aria-label="Aperçu du trajet">
+      <div>
+        <div class="ticket__label"><app-icon name="route" /> Aperçu</div>
+        <div class="ticket__route">
+          <span>{{ form.controls.departureCity.value || 'Départ' }}</span><span class="ticket__line"></span><span>{{ form.controls.destinationCity.value || 'Destination' }}</span>
+        </div>
+        <div class="ticket__meta">
+          @if (form.controls.departureDate.value) {
+            <span class="chip"><app-icon name="clock" /> {{ form.controls.departureDate.value }} {{ form.controls.departureTime.value }}</span>
+          }
+          <span class="chip"><app-icon name="seat" /> {{ form.controls.totalSeats.value || 0 }} place(s)</span>
+          <span class="chip"><app-icon name="wallet" /> {{ form.controls.pricePerSeat.value || 0 }} FCFA / place</span>
+        </div>
+      </div>
+    </div>
+
+    <form class="form-card" [formGroup]="form" (ngSubmit)="submit()">
+      <datalist id="sn-cities">
+        @for (city of cities; track city) { <option [value]="city"></option> }
+      </datalist>
+      <div class="form-section">
+        <h2 class="form-section__title"><span class="form-section__icon"><app-icon name="pin" /></span> Itinéraire</h2>
+        <div class="form-grid">
+          <div class="form-field form-field--full">
+            <label class="form-label" for="vehicleId">Véhicule</label>
+            <select id="vehicleId" class="form-control" formControlName="vehicleId">
+              <option value="" disabled>Choisir un véhicule</option>
+              @for (v of vehicles(); track v.id) {
+                <option [value]="v.id">{{ v.brand }} {{ v.model }} — {{ v.registrationNumber }}</option>
+              }
+            </select>
+          </div>
+        <div class="form-field">
+          <label class="form-label" for="departureCity">Ville de départ</label>
+          <input id="departureCity" class="form-control" type="text" formControlName="departureCity" list="sn-cities" placeholder="Ex. : Dakar" />
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="destinationCity">Destination</label>
+          <input id="destinationCity" class="form-control" type="text" formControlName="destinationCity" list="sn-cities" placeholder="Ex. : Saint-Louis" />
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="departureAddress">Adresse de départ <small class="form-hint">(optionnel)</small></label>
+          <input id="departureAddress" class="form-control" type="text" formControlName="departureAddress" />
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="destinationAddress">Adresse de destination <small class="form-hint">(optionnel)</small></label>
+          <input id="destinationAddress" class="form-control" type="text" formControlName="destinationAddress" />
+        </div>
+        <div class="form-field form-field--full">
+          <label class="form-label" for="meetingPoint">Point de rencontre <small class="form-hint">(optionnel)</small></label>
+          <input id="meetingPoint" class="form-control" type="text" formControlName="meetingPoint" />
+        </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="form-section__title"><span class="form-section__icon"><app-icon name="clock" /></span> Date et heure</h2>
+        <div class="form-grid">
+          <div class="form-field">
+            <label class="form-label" for="departureDate">Date de départ</label>
+            <input
+              id="departureDate"
+              class="form-control"
+              type="date"
+              formControlName="departureDate"
+              [attr.aria-invalid]="form.get('departureDate')?.invalid && form.get('departureDate')?.touched"
+            />
+            @if (form.get('departureDate')?.hasError('pastDate') && form.get('departureDate')?.touched) {
+              <span class="form-error">La date ne peut pas être dans le passé.</span>
+            }
+          </div>
+        <div class="form-field">
+          <label class="form-label" for="departureTime">Heure de départ</label>
+          <input id="departureTime" class="form-control" type="time" formControlName="departureTime" />
+        </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="form-section__title"><span class="form-section__icon"><app-icon name="wallet" /></span> Places et prix</h2>
+        <div class="form-grid">
+          <div class="form-field">
+            <label class="form-label" for="pricePerSeat">Prix par place (FCFA)</label>
+            <input
+              id="pricePerSeat"
+              class="form-control"
+              type="number"
+              min="0"
+              formControlName="pricePerSeat"
+              [attr.aria-invalid]="form.get('pricePerSeat')?.invalid && form.get('pricePerSeat')?.touched"
+            />
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="totalSeats">Nombre de places</label>
+            <input
+              id="totalSeats"
+              class="form-control"
+              type="number"
+              min="1"
+              formControlName="totalSeats"
+              [attr.aria-invalid]="form.get('totalSeats')?.invalid && form.get('totalSeats')?.touched"
+            />
+            @if (isEdit()) {
+              <span class="form-hint">Le nombre total de places ne peut plus être modifié après création.</span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="form-section__title"><span class="form-section__icon"><app-icon name="clipboard" /></span> Détails <small>Optionnel</small></h2>
+        <div class="form-field">
+          <label class="form-label" for="description">Description</label>
+          <textarea id="description" class="form-control" rows="3" formControlName="description" placeholder="Ex. : bagages acceptés, arrêts possibles…"></textarea>
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="rules">Règles du trajet</label>
+          <textarea id="rules" class="form-control" rows="3" formControlName="rules" placeholder="Ex. : pas de fumée, animaux sur demande…"></textarea>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        @if (!isEdit()) {
+          <p class="form-hint">
+            Le trajet sera créé en brouillon. Publiez-le ensuite depuis « Mes trajets » pour le rendre visible aux passagers.
+          </p>
+        }
+        <a class="btn btn--outline" routerLink="/driver/trips">Annuler</a>
+        <button type="submit" class="btn btn--primary" [disabled]="saving()">
+          {{ saving() ? 'Enregistrement…' : isEdit() ? 'Enregistrer les modifications' : 'Créer le brouillon' }}
+        </button>
+      </div>
+    </form>
+  }
+</section>

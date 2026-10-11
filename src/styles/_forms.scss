@@ -1,0 +1,92 @@
+@use 'tokens' as t;
+
+// ---------------------------------------------------------------------------
+// Mise en page commune des pages de formulaire (trajet, véhicule, profil,
+// vérification, signalement…) : carte en sections, grille responsive, actions.
+// ---------------------------------------------------------------------------
+
+.form-page { max-width: 860px; margin-inline: auto; padding-block: t.$space-2 t.$space-6; }
+.form-page--narrow { max-width: 620px; }
+
+.form-head {
+  display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: t.$space-3;
+  margin-bottom: t.$space-5;
+  h1 { margin-bottom: 4px; }
+  p { margin: 0; color: t.$color-muted; font-size: 0.92rem; max-width: 40rem; }
+}
+
+.form-card {
+  background: t.$color-surface;
+  border: 1px solid t.$color-border;
+  border-radius: 20px;
+  box-shadow: t.$shadow-sm;
+  overflow: hidden;
+}
+
+.form-section {
+  padding: t.$space-5 t.$space-6;
+  border-bottom: 1px solid t.$color-border;
+  &:last-child { border-bottom: 0; }
+  .form-field:last-child { margin-bottom: 0; }
+}
+.form-section__title {
+  display: flex; align-items: center; gap: t.$space-3;
+  margin: 0 0 t.$space-4; font-size: 1rem; font-weight: 700;
+  small { margin-left: auto; font-weight: 500; color: t.$color-muted; font-size: 0.8rem; }
+}
+.form-section__icon {
+  display: grid; place-items: center; flex-shrink: 0; width: 34px; height: 34px; border-radius: 10px;
+  font-size: 1.05rem; color: t.$color-primary; background: color-mix(in srgb, t.$color-primary 12%, white);
+}
+
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 t.$space-5; }
+.form-field--full { grid-column: 1 / -1; }
+
+.form-actions {
+  display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: t.$space-3;
+  padding: t.$space-4 t.$space-6; background: #faf8f3; border-top: 1px solid t.$color-border;
+  .form-hint { margin: 0 auto 0 0; max-width: 28rem; }
+}
+
+// Champs fichier : zone de dépôt
+.form-control[type='file'] {
+  padding: t.$space-4; min-height: 0; cursor: pointer;
+  border: 2px dashed t.$color-border; background: #faf8f3;
+  &:hover { border-color: t.$color-primary; background: #fff6ef; }
+  &::file-selector-button {
+    margin-right: t.$space-3; padding: 0.45rem 1rem; border: 0; border-radius: t.$radius-pill;
+    background: t.$color-primary; color: #fff; font-weight: 600; cursor: pointer;
+  }
+}
+
+.form-avatar {
+  display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%;
+  font-size: 1.35rem; font-weight: 800; text-transform: uppercase;
+  color: #fff; background: linear-gradient(135deg, t.$color-primary, t.$color-primary-dark);
+  box-shadow: 0 8px 18px color-mix(in srgb, t.$color-primary 35%, transparent);
+}
+.form-identity { display: flex; align-items: center; gap: t.$space-4; strong { display: block; font-size: 1.1rem; } span { color: t.$color-muted; font-size: 0.88rem; } }
+
+@media (max-width: t.$breakpoint-md) {
+  .form-grid { grid-template-columns: 1fr; }
+  .form-section, .form-actions { padding-inline: t.$space-4; }
+}
+
+// --- Conversation (support) ---------------------------------------------------
+.chat-people { display: flex; flex-wrap: wrap; gap: t.$space-2; margin-bottom: t.$space-4; }
+.chat-person {
+  display: inline-flex; align-items: center; gap: 8px; padding: 0.4rem 0.9rem; border-radius: t.$radius-pill;
+  border: 1px solid t.$color-border; background: t.$color-surface; font-size: 0.85rem; font-weight: 600; cursor: pointer; color: t.$color-text;
+  &:hover { border-color: t.$color-primary; }
+  &--active { background: t.$color-primary; border-color: t.$color-primary; color: #fff; }
+}
+.chat-person__dot { width: 8px; height: 8px; border-radius: 50%; background: #2fd27d; &--guest { background: #d89614; } }
+
+.chat-thread { display: flex; flex-direction: column; gap: t.$space-3; min-height: 220px; max-height: 460px; overflow-y: auto; padding: t.$space-5; background: t.$color-background; }
+.chat-msg {
+  max-width: 80%; padding: 0.7rem 0.95rem; border-radius: 16px 16px 16px 4px; align-self: flex-start;
+  background: t.$color-primary; color: #fff;
+  small { display: block; opacity: 0.8; font-size: 0.72rem; }
+  p { margin: 0.25rem 0 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 0.92rem; }
+  &--staff { align-self: flex-end; border-radius: 16px 16px 4px 16px; background: t.$color-surface; color: t.$color-text; border: 1px solid t.$color-border; }
+}

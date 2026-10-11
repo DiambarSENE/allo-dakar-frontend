@@ -1,0 +1,54 @@
+<section class="container form-page form-page--narrow">
+  <div class="form-head">
+    <div>
+      <h1>Signaler un problème</h1>
+      <p>Votre signalement est confidentiel et examiné par notre équipe.</p>
+    </div>
+  </div>
+  @if (targetLabel) {
+    <div class="notice" role="note" style="margin-bottom: 1rem;"><app-icon name="flag" /><span>Vous signalez : <strong>{{ targetLabel }}</strong></span></div>
+  }
+
+  <form class="form-card" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="form-section">
+    @if (!hasPresetTarget) {
+      <div class="form-field">
+        <label class="form-label" for="target">Concerne</label>
+        <select id="target" class="form-control" formControlName="target">
+          <option value="" disabled>
+            {{ optionsLoading() ? 'Chargement…' : (options().length ? 'Choisissez une réservation ou un trajet' : 'Aucune réservation ni trajet') }}
+          </option>
+          @for (o of options(); track o.value) {
+            <option [value]="o.value">{{ o.label }}</option>
+          }
+        </select>
+        @if (form.controls.target.touched && form.controls.target.invalid) {
+          <span class="form-error">Choisissez l'élément concerné par votre signalement.</span>
+        }
+        <span class="form-hint">Pour signaler un avis ou un conducteur précis, utilisez le bouton « Signaler » depuis sa page.</span>
+      </div>
+    }
+    <div class="form-field">
+      <label class="form-label" for="reason">Motif</label>
+      <select id="reason" class="form-control" formControlName="reason">
+        @for (r of reasons; track r) {
+          <option [value]="r">{{ reasonLabels[r] }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="form-field">
+      <label class="form-label" for="description">Description (optionnel)</label>
+      <textarea id="description" class="form-control" rows="4" formControlName="description"></textarea>
+    </div>
+
+    </div>
+
+    <div class="form-actions">
+      <a class="btn btn--outline" routerLink="/reports">Annuler</a>
+      <button type="submit" class="btn btn--primary" [disabled]="submitting()">
+        {{ submitting() ? 'Envoi…' : 'Envoyer le signalement' }}
+      </button>
+    </div>
+  </form>
+</section>

@@ -1,0 +1,122 @@
+<div class="space">
+  <section class="hero hero--passenger">
+    <div>
+      <span class="hero__eyebrow"><app-icon name="user" /> Espace passager</span>
+      <h1>Bonjour{{ firstName() ? ', ' + firstName() : '' }} 👋</h1>
+      <p>Où allez-vous aujourd'hui ? Trouvez un trajet partout au Sénégal et voyagez en toute confiance.</p>
+    </div>
+    <div class="hero__actions">
+      <a class="btn btn--light" routerLink="/trips"><app-icon name="search" /> Rechercher un trajet</a>
+      <a class="btn btn--glass" routerLink="/passenger/bookings">Mes réservations</a>
+    </div>
+  </section>
+
+  <section class="kpi-grid" aria-label="Vos chiffres">
+    <a class="kpi" routerLink="/passenger/bookings">
+      <span class="kpi__icon"><app-icon name="clock" /></span>
+      <span class="kpi__body"><span class="kpi__label">Réservations à venir</span><span class="kpi__value">{{ upcomingCount() }}</span></span>
+    </a>
+    <a class="kpi kpi--teal" routerLink="/passenger/bookings">
+      <span class="kpi__icon"><app-icon name="ticket" /></span>
+      <span class="kpi__body"><span class="kpi__label">Réservations au total</span><span class="kpi__value">{{ totalBookings() }}</span></span>
+    </a>
+    <a class="kpi kpi--amber" routerLink="/reviews">
+      <span class="kpi__icon"><app-icon name="star" /></span>
+      <span class="kpi__body"><span class="kpi__label">Avis reçus</span><span class="kpi__value">{{ reviews().length }}{{ reviews().length === 3 ? '+' : '' }}</span></span>
+    </a>
+  </section>
+
+  <app-action-list [items]="actions()" />
+
+  @if (loading()) {
+    <div class="panel"><app-spinner label="Chargement…" /></div>
+  } @else if (nextBooking(); as b) {
+    <section class="ticket" aria-label="Prochaine réservation">
+      <div>
+        <div class="ticket__label"><app-icon name="ticket" /> Prochaine réservation</div>
+        <div class="ticket__route">
+          <span>{{ b.trip.departureCity }}</span><span class="ticket__line"></span><span>{{ b.trip.destinationCity }}</span>
+        </div>
+        <div class="ticket__meta">
+          <span class="chip"><app-icon name="clock" /> {{ b.trip.departureDate | date: 'EEE d MMM' }} · {{ b.trip.departureTime.slice(0, 5) }}</span>
+          <span class="chip"><app-icon name="seat" /> {{ b.numberOfSeats }} place{{ b.numberOfSeats > 1 ? 's' : '' }}</span>
+          <span class="badge" [class.badge--success]="b.status === 'CONFIRMED'" [class.badge--warning]="b.status === 'PENDING'">
+            {{ b.status === 'CONFIRMED' ? 'Confirmée' : 'En attente' }}
+          </span>
+        </div>
+      </div>
+      <div class="ticket__side">
+        <strong>{{ b.totalAmount }} FCFA</strong>
+        <a class="btn btn--primary btn--sm" [routerLink]="['/bookings', b.id]">Voir le détail <app-icon name="arrow" /></a>
+      </div>
+    </section>
+  } @else {
+    <section class="ticket ticket--empty">
+      <strong>Aucune réservation à venir</strong>
+      <p>Votre prochain voyage commence ici.</p>
+      <a class="btn btn--primary btn--sm" routerLink="/trips"><app-icon name="search" /> Rechercher un trajet</a>
+    </section>
+  }
+
+  <section>
+    <h2 class="section-title">Accès rapide</h2>
+    <div class="tile-grid">
+      <a class="tile" routerLink="/passenger/bookings">
+        <span class="tile__icon"><app-icon name="ticket" /></span>
+        <span><h3>Mes réservations</h3><p>Historique complet, à venir et terminées.</p></span>
+        <app-icon class="tile__arrow" name="arrow" />
+      </a>
+      <a class="tile tile--green" routerLink="/payments">
+        <span class="tile__icon"><app-icon name="wallet" /></span>
+        <span><h3>Mes paiements</h3><p>Suivez le statut de vos paiements.</p></span>
+        <app-icon class="tile__arrow" name="arrow" />
+      </a>
+      <a class="tile tile--blue" routerLink="/notifications">
+        <span class="tile__icon"><app-icon name="bell" /></span>
+        <span><h3>Notifications</h3><p>Confirmations, annulations, réponses.</p></span>
+        <app-icon class="tile__arrow" name="arrow" />
+      </a>
+      <a class="tile tile--amber" routerLink="/reviews">
+        <span class="tile__icon"><app-icon name="star" /></span>
+        <span><h3>Mes avis</h3><p>Avis reçus et avis que vous avez laissés.</p></span>
+        <app-icon class="tile__arrow" name="arrow" />
+      </a>
+      <a class="tile tile--red" routerLink="/reports">
+        <span class="tile__icon"><app-icon name="flag" /></span>
+        <span><h3>Mes signalements</h3><p>Suivez le traitement de vos signalements.</p></span>
+        <app-icon class="tile__arrow" name="arrow" />
+      </a>
+      <a class="tile tile--teal" routerLink="/profile">
+        <span class="tile__icon"><app-icon name="user" /></span>
+        <span><h3>Mon profil</h3><p>Modifiez vos informations personnelles.</p></span>
+        <app-icon class="tile__arrow" name="arrow" />
+      </a>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel__head">
+      <h2>Derniers avis reçus</h2>
+      <a routerLink="/reviews">Tout voir</a>
+    </div>
+    @if (reviewsLoading()) {
+      <app-spinner label="Chargement…" />
+    } @else if (reviews().length === 0) {
+      <p class="empty-note"><app-icon name="star" /> Vous n'avez pas encore reçu d'avis.</p>
+    } @else {
+      <ul class="review-list">
+        @for (r of reviews(); track r.id) {
+          <li class="review-item">
+            <span class="avatar" aria-hidden="true">{{ initials(r.authorFullName) }}</span>
+            <div>
+              <strong>{{ r.authorFullName }}</strong>
+              <app-rating-stars [value]="r.rating" />
+              @if (r.comment) { <p>{{ r.comment }}</p> }
+              <a class="review-report-link" [routerLink]="['/reports/new']" [queryParams]="{ reviewId: r.id }">Signaler cet avis</a>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  </section>
+</div>

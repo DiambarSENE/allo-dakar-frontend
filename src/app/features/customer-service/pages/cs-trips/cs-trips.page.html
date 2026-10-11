@@ -1,0 +1,39 @@
+<h1>Trajets</h1>
+
+@switch (state()) {
+  @case ('loading') {
+    <app-spinner label="Chargement des trajets…" />
+  }
+  @case ('error') {
+    <app-error-state title="Impossible de charger les trajets" (retry)="retry()" />
+  }
+  @case ('success') {
+    <div class="table-wrapper">
+      <table appDataTable class="data-table">
+        <thead>
+          <tr>
+            <th>Trajet</th>
+            <th>Conducteur</th>
+            <th>Date</th>
+            <th>Places</th>
+            <th>Statut</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (t of trips(); track t.id) {
+            <tr>
+              <td>{{ t.departureCity }} → {{ t.destinationCity }}</td>
+              <td>{{ t.driverFullName }}</td>
+              <td>{{ t.departureDate }}</td>
+              <td>{{ t.availableSeats }} / {{ t.totalSeats }}</td>
+              <td><span [class]="t.status | statusBadge">{{ t.status | statusLabel }}</span></td>
+              <td style="display:flex; gap:.4rem; flex-wrap:wrap; align-items:flex-start;"><a class="btn btn--outline btn--sm" [routerLink]="['/trips', t.id]">Voir</a><app-trip-passengers [tripId]="t.id" /></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <app-pagination [pagination]="pagination()" (pageChange)="onPageChange($event)" />
+  }
+}

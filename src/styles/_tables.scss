@@ -1,0 +1,96 @@
+@use 'tokens' as t;
+
+// ---------------------------------------------------------------------------
+// Tableaux modernes (surcharge de .table-wrapper / .data-table / DataTables) et
+// habillage commun des pages dans les espaces authentifiés. Global : aucun
+// template à dupliquer, les pages existantes en profitent automatiquement.
+// ---------------------------------------------------------------------------
+
+.table-wrapper {
+  overflow-x: auto;
+  background: t.$color-surface;
+  border: 1px solid t.$color-border;
+  border-radius: 16px;
+  box-shadow: t.$shadow-sm;
+}
+
+table.data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.9rem;
+
+  th,
+  td {
+    padding: 0.85rem t.$space-4;
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid t.$color-border;
+    white-space: nowrap;
+  }
+
+  thead th {
+    position: sticky;
+    top: 0;
+    background: #faf8f3;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: t.$color-muted;
+    border-bottom: 2px solid t.$color-border;
+  }
+
+  tbody tr { transition: background-color 0.12s ease; }
+  tbody tr:nth-child(even) { background: rgba(31, 42, 36, 0.018); }
+  tbody tr:hover { background: color-mix(in srgb, t.$color-primary 6%, white); }
+  tbody tr:last-child td { border-bottom: 0; }
+  tbody td:first-child { font-weight: 600; }
+
+  td .badge { white-space: nowrap; }
+  td > .btn + .btn { margin-left: t.$space-2; }
+}
+
+// --- Barre de recherche DataTables ------------------------------------------
+.table-wrapper .dt-container {
+  .dt-layout-row:first-child { padding: t.$space-3 t.$space-4; border-bottom: 1px solid t.$color-border; }
+  .dt-layout-row { margin: 0; }
+  .dt-search { display: flex; align-items: center; gap: t.$space-2; font-size: 0.85rem; color: t.$color-muted; }
+  .dt-search input,
+  .dt-input {
+    min-height: 38px;
+    padding: 0 t.$space-3;
+    border: 1px solid t.$color-border;
+    border-radius: t.$radius-pill;
+    background: t.$color-background;
+    color: t.$color-text;
+    font-size: 0.88rem;
+    &:focus { outline: 2px solid color-mix(in srgb, t.$color-primary 55%, white); border-color: transparent; }
+  }
+  .dt-empty { padding: t.$space-6 !important; text-align: center; color: t.$color-muted; }
+  table.dataTable thead > tr > th.dt-orderable-asc:hover,
+  table.dataTable thead > tr > th.dt-orderable-desc:hover { outline: 0; color: t.$color-text; }
+  table.dataTable > thead > tr > th, table.dataTable > thead > tr > td { border-bottom-width: 2px; }
+}
+
+// --- Habillage des pages dans les espaces connectés ---------------------------
+.app-shell__content {
+  h1 {
+    position: relative;
+    margin: 0 0 t.$space-5;
+    padding-left: 0.9rem;
+    font-size: clamp(1.4rem, 2.6vw, 1.85rem);
+    letter-spacing: -0.015em;
+    &::before { content: ''; position: absolute; left: 0; top: 0.18em; bottom: 0.18em; width: 5px; border-radius: 5px; background: linear-gradient(180deg, t.$color-primary, t.$color-primary-dark); }
+  }
+  .hero h1 { padding-left: 0; &::before { display: none; } }
+  .container { max-width: 1120px; margin-inline: auto; }
+}
+
+.card { border-radius: t.$radius-lg; box-shadow: t.$shadow-sm; }
+
+// --- Boutons et champs : retours visuels plus soignés ---------------------------
+.btn--primary { box-shadow: 0 6px 14px color-mix(in srgb, t.$color-primary 30%, transparent); &:hover:not(:disabled) { box-shadow: 0 8px 18px color-mix(in srgb, t.$color-primary 38%, transparent); } }
+.btn { &:active:not(:disabled) { transform: translateY(1px); } &:focus-visible { outline: 3px solid color-mix(in srgb, t.$color-primary 45%, white); outline-offset: 2px; } }
+.form-control { transition: border-color 0.15s ease, box-shadow 0.15s ease; &:focus { box-shadow: 0 0 0 3px color-mix(in srgb, t.$color-primary 18%, transparent); outline: 0; } }
+

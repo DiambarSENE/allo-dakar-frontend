@@ -1,0 +1,181 @@
+<section class="hero">
+  <div class="container hero__inner">
+    <div class="hero__copy">
+      <span class="hero__eyebrow"><span class="hero__eyebrow-dot"></span> Le covoiturage, version Sénégal</span>
+      <h1>La route est plus belle <span>quand on la partage.</span></h1>
+      <p class="hero__subtitle">
+        Trouvez votre place, partagez vos frais et faites de belles rencontres sur les routes du Sénégal.
+        Avec Allo Dakar, voyagez ensemble et en toute confiance.
+      </p>
+      <div class="hero__actions">
+        <a routerLink="/trips" class="btn btn--primary">Trouver un trajet <app-icon name="arrow" /></a>
+        <a routerLink="/driver/trips/new" class="btn btn--outline hero__publish-btn">
+          <app-icon name="plus" /> Publier un trajet
+        </a>
+      </div>
+      <div class="hero__trust" aria-label="Les engagements Allo Dakar">
+        <span><app-icon name="shield" /> Conducteurs vérifiés</span>
+        <span><app-icon name="ticket" /> Réservation simple</span>
+        <span><app-icon name="users" /> Communauté solidaire</span>
+      </div>
+    </div>
+    <div class="hero__search-wrap">
+      <div class="hero__search-heading">
+        <span class="hero__search-icon" aria-hidden="true"><app-icon name="search" /></span>
+        <div><h2>Où souhaitez-vous aller ?</h2><p>Votre prochain trajet commence ici.</p></div>
+      </div>
+      <app-search-trip-form [compact]="true" (search)="onSearch($event)" />
+      <div class="search-chips" aria-label="Trajets populaires">
+        <span>Populaires :</span>
+        @for (d of destinations.slice(0, 3); track d.city) {
+          <button type="button" (click)="quickSearch(d.city)">Dakar → {{ d.city }}</button>
+        }
+      </div>
+      <div class="hero__search-note"><span aria-hidden="true">✦</span> Voyagez malin. Voyagez ensemble.</div>
+    </div>
+  </div>
+  <div class="hero__decor hero__decor--one" aria-hidden="true"></div>
+  <div class="hero__decor hero__decor--two" aria-hidden="true"></div>
+</section>
+
+<section class="intro-strip" aria-label="Les avantages du covoiturage">
+  <div class="container intro-strip__inner">
+    <div><span class="intro-strip__icon" aria-hidden="true"><app-icon name="wallet" /></span><span><strong>Moins de frais</strong><small>Partagez les dépenses du trajet</small></span></div>
+    <div><span class="intro-strip__icon" aria-hidden="true"><app-icon name="users" /></span><span><strong>Plus de rencontres</strong><small>La route crée des liens</small></span></div>
+    <div><span class="intro-strip__icon" aria-hidden="true"><app-icon name="shield" /></span><span><strong>Plus de confiance</strong><small>Des profils et des avis consultables</small></span></div>
+  </div>
+</section>
+
+<section class="how-it-works section-pad">
+  <div class="container">
+    <div class="section-heading">
+      <span class="section-kicker">Simple comme bonjour</span>
+      <h2>Votre voyage, en 3 étapes</h2>
+      <p>Quelques clics suffisent pour organiser votre prochain déplacement.</p>
+    </div>
+    <div class="how-it-works__grid">
+      <article class="how-it-works__step card">
+        <span class="how-it-works__number">01</span><span class="step-icon" aria-hidden="true"><app-icon name="search" /></span>
+        <h3>Recherchez</h3><p>Indiquez votre ville de départ, votre destination et la date souhaitée.</p>
+      </article>
+      <article class="how-it-works__step card">
+        <span class="how-it-works__number">02</span><span class="step-icon" aria-hidden="true"><app-icon name="ticket" /></span>
+        <h3>Réservez</h3><p>Comparez les trajets, consultez les profils et réservez votre place.</p>
+      </article>
+      <article class="how-it-works__step card">
+        <span class="how-it-works__number">03</span><span class="step-icon" aria-hidden="true"><app-icon name="car" /></span>
+        <h3>Prenez la route</h3><p>Retrouvez votre conducteur au point convenu et profitez du voyage.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+
+<section class="mk-section">
+  <div class="container">
+    <div class="mk-head">
+      <span class="kicker">Où allez-vous ?</span>
+      <h2>Les destinations qui bougent</h2>
+      <p>Lancez une recherche en un clic depuis Dakar vers les villes les plus demandées.</p>
+    </div>
+    <div class="dest-grid">
+      @for (d of destinations; track d.city) {
+        <a class="dest-card" routerLink="/trips" [queryParams]="{ departureCity: 'Dakar', destinationCity: d.city }">
+          <span class="dest-card__pin" aria-hidden="true"><app-icon name="pin" /></span>
+          <small>Au départ de Dakar</small>
+          <strong>{{ d.city }} <app-icon name="arrow" /></strong>
+        </a>
+      }
+    </div>
+  </div>
+</section>
+
+<section class="community section-pad">
+  <div class="container">
+    <div class="section-heading section-heading--left">
+      <span class="section-kicker">Plus qu'un trajet</span>
+      <h2>Bienvenue dans la communauté Allo Dakar</h2>
+      <p>Le covoiturage, c'est aussi l'entraide, la confiance et les rencontres sur la route.</p>
+    </div>
+    <div class="community__grid">
+      <article class="community-card community-card--warm"><span class="community-card__icon" aria-hidden="true"><app-icon name="shield" /></span><h3>La confiance avant tout</h3><p>Consultez les profils, les évaluations et les informations utiles avant de choisir votre trajet.</p><span class="community-card__label">Voyager sereinement</span></article>
+      <article class="community-card community-card--green"><span class="community-card__icon" aria-hidden="true"><app-icon name="users" /></span><h3>Une communauté qui rapproche</h3><p>Rencontrez des personnes qui partagent votre destination et faites de la route un moment convivial.</p><span class="community-card__label">Partager la route</span></article>
+      <article class="community-card community-card--cream"><span class="community-card__icon" aria-hidden="true"><app-icon name="wallet" /></span><h3>Tout le monde y gagne</h3><p>Les passagers trouvent une solution pratique et les conducteurs partagent les frais de déplacement.</p><span class="community-card__label">Économiser ensemble</span></article>
+    </div>
+  </div>
+</section>
+
+
+<section class="mk-section" style="background:#fff;">
+  <div class="container price-split">
+    <div class="price-split__copy">
+      <span class="kicker">Tarif transparent</span>
+      <h2>Le prix du trajet, plus des frais clairs.</h2>
+      <p>Pas de surprise au moment de payer : vous voyez le détail avant de réserver.</p>
+      <ul>
+        <li><app-icon name="shield" /> <span>Le <strong>prix par place</strong> est fixé librement par le conducteur.</span></li>
+        <li><app-icon name="ticket" /> <span><strong>{{ pricing.reservationFee() | number: '1.0-0' }} FCFA de frais de réservation</strong>, une seule fois par réservation.</span></li>
+        <li><app-icon name="users" /> <span>Les frais ne changent pas avec le nombre de places réservées.</span></li>
+      </ul>
+    </div>
+    <div class="price-split__card" aria-label="Exemple de tarif">
+      <h3>Exemple pour 2 places à 3 000 FCFA</h3>
+      <div class="fees fees--total">
+        <div class="fees__row"><span>Trajet (2 × 3 000)</span><span>6 000 FCFA</span></div>
+        <div class="fees__row"><span>Frais de réservation</span><span>{{ pricing.reservationFee() | number: '1.0-0' }} FCFA</span></div>
+        <div class="fees__row fees__row--total"><span>Total à payer</span><strong>{{ 6000 + pricing.reservationFee() | number: '1.0-0' }} FCFA</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mk-section">
+  <div class="container">
+    <div class="driver-band">
+      <div>
+        <span class="kicker">Vous conduisez ?</span>
+        <h2>Partagez vos frais, remplissez vos places.</h2>
+        <p>Publiez votre trajet en quelques minutes, fixez votre prix et voyagez accompagné.</p>
+        <a routerLink="/driver/trips/new" class="btn btn--light"><app-icon name="plus" /> Publier un trajet</a>
+      </div>
+      <div class="driver-band__perks">
+        <div><app-icon name="wallet" /> Vous fixez le prix par place</div>
+        <div><app-icon name="shield" /> Passagers et conducteurs avec avis</div>
+        <div><app-icon name="clock" /> Publication en quelques minutes</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mobile section-pad">
+  <div class="container mobile__panel">
+    <div class="mobile__copy">
+      <span class="section-kicker">Toujours avec vous</span>
+      <h2>Allo Dakar, dans votre poche.</h2>
+      <p>Besoin de trouver un trajet entre deux rendez-vous ? L'expérience Allo Dakar s'adapte à votre téléphone pour chercher, réserver et suivre vos déplacements où que vous soyez.</p>
+      <div class="mobile__features"><span><span aria-hidden="true">✓</span> Recherche rapide</span><span><span aria-hidden="true">✓</span> Réservation en ligne</span><span><span aria-hidden="true">✓</span> Vos trajets à portée de main</span></div>
+      <div class="mobile__download-actions">
+        <a routerLink="/trips" class="btn btn--primary">Explorer les trajets <span aria-hidden="true">→</span></a>
+        <a routerLink="/application-mobile" class="store-link" aria-label="Télécharger Allo Dakar sur iPhone — bientôt disponible">
+          <span class="store-link__icon" aria-hidden="true"></span><span><small>Pour</small><strong>iPhone / iOS</strong><em>Bientôt disponible</em></span>
+        </a>
+        <a routerLink="/application-mobile" class="store-link" aria-label="Télécharger Allo Dakar sur Android — bientôt disponible">
+          <span class="store-link__icon" aria-hidden="true">▸</span><span><small>Pour</small><strong>Android</strong><em>Bientôt disponible</em></span>
+        </a>
+      </div>
+      <p class="mobile__note">Utilisable dès maintenant depuis le navigateur de votre téléphone.</p>
+    </div>
+    <div class="mobile__art" aria-label="Illustration d'un téléphone affichant Allo Dakar">
+      <div class="phone-mockup"><div class="phone-mockup__notch"></div><div class="phone-mockup__screen"><div class="phone-mockup__brand"><span>●</span> AlloDakar</div><div class="phone-mockup__hello">Bonjour 👋<strong>On part où ?</strong></div><div class="phone-mockup__route"><span>DEPUIS</span><strong>Dakar</strong><i>↕</i><span>DESTINATION</span><strong>Saint-Louis</strong></div><div class="phone-mockup__date">◷ &nbsp; Choisir une date</div><div class="phone-mockup__button">Trouver un trajet</div><div class="phone-mockup__mini-title">Pourquoi Allo Dakar ?</div><div class="phone-mockup__mini-row"><span>✓</span><span>Des trajets plus simples</span></div><div class="phone-mockup__mini-row"><span>♡</span><span>Des rencontres en route</span></div></div></div>
+      <span class="mobile__bubble mobile__bubble--one" aria-hidden="true">✓</span><span class="mobile__bubble mobile__bubble--two" aria-hidden="true">↗</span>
+    </div>
+  </div>
+</section>
+
+<section class="cta section-pad">
+  <div class="container cta__inner">
+    <span class="section-kicker">La prochaine aventure commence ici</span><h2>Prêt à prendre la route ?</h2>
+    <p>Passager ou conducteur, trouvez la formule qui vous convient.</p>
+    <div class="cta__actions"><a routerLink="/trips" class="btn btn--primary">Rechercher un trajet</a><a routerLink="/driver/trips/new" class="btn btn--outline">Proposer des places</a></div>
+  </div>
+</section>

@@ -1,0 +1,70 @@
+<section class="container" style="padding-block: 2rem;">
+  <h1>Mes avis</h1>
+
+  <div role="tablist" aria-label="Type d'avis" style="display:flex; gap:.5rem; margin-block:1rem;">
+    <button type="button" role="tab" class="btn btn--sm" [class.btn--primary]="tab() === 'received'" [class.btn--outline]="tab() !== 'received'"
+            [attr.aria-selected]="tab() === 'received'" (click)="selectTab('received')">Avis reçus</button>
+    <button type="button" role="tab" class="btn btn--sm" [class.btn--primary]="tab() === 'written'" [class.btn--outline]="tab() !== 'written'"
+            [attr.aria-selected]="tab() === 'written'" (click)="selectTab('written')">Avis rédigés</button>
+  </div>
+
+  @switch (state()) {
+    @case ('loading') {
+      <app-spinner label="Chargement des avis…" />
+    }
+    @case ('error') {
+      <app-error-state title="Impossible de charger les avis" (retry)="retry()" />
+    }
+    @case ('success') {
+      @if (reviews().length === 0) {
+        <app-empty-state [title]="tab() === 'received' ? 'Vous n’avez pas encore reçu d’avis' : 'Vous n’avez rédigé aucun avis'" />
+      } @else {
+        <ul style="list-style:none; padding:0; display:grid; gap:1rem;">
+          @for (r of reviews(); track r.id) {
+            <li class="card">
+              <div style="display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; align-items:center;">
+                <strong>{{ tab() === 'received' ? r.authorFullName : 'Pour ' + r.targetUserFullName }}</strong>
+                <span class="form-hint" style="margin:0">{{ r.createdAt | date: 'dd/MM/yyyy' }}</span>
+              </div>
+              <app-rating-stars [value]="r.rating" />
+              @if (r.comment) { <p style="white-space:pre-wrap; margin:.5rem 0">{{ r.comment }}</p> }
+
+              @if (tab() === 'written') {
+                @if (r.status === 'HIDDEN') {
+                  <p class="form-hint">Cet avis a été masqué par la modération.</p>
+                }
+                <div style="display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.5rem;">
+                  <button type="button" class="btn btn--outline btn--sm" (click)="startEdit(r)" [disabled]="actingOnId() === r.id">Modifier</button>
+                  <button type="button" class="btn btn--danger btn--sm" (click)="remove(r)" [disabled]="actingOnId() === r.id">Supprimer</button>
+                </div>
+              } @else {
+                <a class="review-report-link" [routerLink]="['/reports/new']" [queryParams]="{ reviewId: r.id }">Signaler cet avis</a>
+              }
+            </li>
+          }
+        </ul>
+        <app-pagination [pagination]="pagination()" (pageChange)="onPageChange($event)" />
+      }
+    }
+  }
+</section>
+
+@if (editing(); as e) {
+  <app-modal title="Modifier mon avis" (closed)="cancelEdit()">
+    <p style="margin-top:0">Avis pour <strong>{{ e.targetUserFullName }}</strong></p>
+    <div class="form-field">
+      <span class="form-label">Note</span>
+      <app-rating-stars mode="input" [value]="editRating()" (valueChange)="editRating.set($event)" />
+    </div>
+    <div class="form-field">
+      <label class="form-label" for="edit-comment">Commentaire</label>
+      <textarea id="edit-comment" class="form-control" rows="4" maxlength="1000" [value]="editComment()" (input)="setComment($event)"></textarea>
+    </div>
+    <div modal-actions>
+      <button type="button" class="btn btn--outline" (click)="cancelEdit()" [disabled]="saving()">Annuler</button>
+      <button type="button" class="btn btn--primary" (click)="saveEdit()" [disabled]="saving() || editRating() < 1">
+        {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
+      </button>
+    </div>
+  </app-modal>
+}

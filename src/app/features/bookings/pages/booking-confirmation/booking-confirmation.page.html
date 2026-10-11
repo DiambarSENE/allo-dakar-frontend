@@ -1,0 +1,57 @@
+<section class="container" style="padding-block: 2rem; max-width: 560px;">
+  @switch (state()) {
+    @case ('loading') {
+      <app-spinner label="Chargement de votre réservation…" />
+    }
+    @case ('error') {
+      <app-error-state title="Réservation introuvable" [retryable]="false" />
+    }
+    @case ('success') {
+      @if (booking(); as b) {
+        <div class="card">
+          @if (b.paymentStatus === 'SUCCESS' || b.status === 'CONFIRMED') {
+            <p class="badge badge--success">Réservation confirmée</p>
+            <h1>Merci pour votre réservation !</h1>
+          } @else {
+            <p class="badge badge--warning">Réservation en attente de paiement</p>
+            <h1>Votre réservation est presque terminée</h1>
+          }
+          <dl>
+            <dt>Référence</dt>
+            <dd><strong>{{ b.bookingReference }}</strong></dd>
+            <dt>Trajet</dt>
+            <dd>{{ b.trip.departureCity }} → {{ b.trip.destinationCity }} le {{ b.trip.departureDate }}</dd>
+            <dt>Places</dt>
+            <dd>{{ b.numberOfSeats }}</dd>
+            <dt>Statut du paiement</dt>
+            <dd>{{ b.paymentStatus | statusLabel }}</dd>
+          </dl>
+          <div class="fees fees--total" aria-label="Détail du montant">
+            <div class="fees__row">
+              <span>Trajet ({{ b.numberOfSeats }} × {{ b.unitPrice | number: '1.0-0' }})</span>
+              <span>{{ b.numberOfSeats * b.unitPrice | number: '1.0-0' }} FCFA</span>
+            </div>
+            @if (b.reservationFee > 0) {
+              <div class="fees__row">
+                <span>Frais de réservation</span>
+                <span>{{ b.reservationFee | number: '1.0-0' }} FCFA</span>
+              </div>
+            }
+            <div class="fees__row fees__row--total">
+              <span>Total</span>
+              <strong>{{ b.totalAmount | number: '1.0-0' }} FCFA</strong>
+            </div>
+          </div>
+          <div style="display:flex; gap: 0.75rem; margin-top: 1rem;">
+            @if (b.status === 'PENDING' && b.paymentStatus !== 'SUCCESS') {
+              <a class="btn btn--primary" [routerLink]="['/bookings', b.id]">Payer maintenant</a>
+            } @else {
+              <a class="btn btn--primary" [routerLink]="['/bookings', b.id]">Voir ma réservation</a>
+            }
+            <a class="btn btn--outline" routerLink="/trips">Retour aux trajets</a>
+          </div>
+        </div>
+      }
+    }
+  }
+</section>

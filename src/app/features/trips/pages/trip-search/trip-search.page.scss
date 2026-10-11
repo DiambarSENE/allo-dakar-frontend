@@ -1,0 +1,11 @@
+@use '../../../../../styles/tokens' as t;
+
+.trip-search { padding-block: t.$space-2 t.$space-8; max-width: 1180px; }
+.trip-search__results-heading { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: t.$space-3; margin-bottom: t.$space-4; }
+.trip-search__results-heading h2 { margin: 0; font-size: 1.3rem; letter-spacing: -.02em; }
+.trip-search__results-heading p { margin: .25rem 0 0; color: t.$color-muted; font-size: .9rem; }
+.trip-search__head-actions { display: flex; align-items: center; gap: t.$space-3; }
+.trip-search__count { white-space: nowrap; border-radius: 999px; padding: .4rem .8rem; background: #eaf5f0; color: #176b53; font-size: .85rem; font-weight: 700; }
+.trip-search__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: t.$space-4; }
+@media (max-width: 860px) { .trip-search__grid { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 420px) { .trip-search { padding-inline: .85rem; } }

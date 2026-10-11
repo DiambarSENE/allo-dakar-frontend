@@ -1,0 +1,146 @@
+<div class="space">
+  <section class="hero hero--driver">
+    <div>
+      <span class="hero__eyebrow"><app-icon name="car" /> Espace conducteur</span>
+      <h1>Bonjour{{ firstName() ? ', ' + firstName() : '' }} 👋</h1>
+      <p>Publiez vos trajets, remplissez vos places et suivez votre réputation.</p>
+    </div>
+    <div class="hero__actions">
+      <a class="btn btn--light" routerLink="/driver/trips/new"><app-icon name="plus" /> Publier un trajet</a>
+      <a class="btn btn--glass" routerLink="/driver/trips">Mes trajets</a>
+    </div>
+  </section>
+
+  @if (showSteps()) {
+    <app-checklist [steps]="steps()" />
+  }
+  <app-action-list [items]="actions()" />
+
+  @if (profile(); as p) {
+    @if (!isVerified() && !showSteps()) {
+      <div class="notice" role="status">
+        <app-icon name="shield" />
+        <div>
+          <strong>Votre profil n'est pas encore vérifié</strong>
+          <span>Statut : {{ verificationLabels[p.verificationStatus] }}. La vérification est nécessaire pour publier des trajets.</span>
+        </div>
+        <a class="btn btn--primary btn--sm" routerLink="/driver/verification">Compléter la vérification</a>
+      </div>
+    }
+
+    <section class="kpi-grid" aria-label="Vos statistiques">
+      <div class="kpi kpi--amber">
+        <span class="kpi__icon"><app-icon name="star" /></span>
+        <span class="kpi__body"><span class="kpi__label">Note moyenne</span><app-rating-stars [value]="p.averageRating" /></span>
+      </div>
+      <div class="kpi kpi--teal">
+        <span class="kpi__icon"><app-icon name="route" /></span>
+        <span class="kpi__body"><span class="kpi__label">Trajets effectués</span><span class="kpi__value">{{ p.totalTrips }}</span></span>
+      </div>
+      <div class="kpi kpi--blue">
+        <span class="kpi__icon"><app-icon name="message" /></span>
+        <span class="kpi__body"><span class="kpi__label">Avis reçus</span><span class="kpi__value">{{ p.totalReviews }}</span></span>
+      </div>
+      <a class="kpi" [class.kpi--green]="isVerified()" routerLink="/driver/verification">
+        <span class="kpi__icon"><app-icon name="shield" /></span>
+        <span class="kpi__body">
+          <span class="kpi__label">Vérification</span>
+          <span class="badge" [class.badge--success]="isVerified()" [class.badge--warning]="p.verificationStatus === 'PENDING' || p.verificationStatus === 'UNDER_REVIEW'"
+                [class.badge--danger]="p.verificationStatus === 'REJECTED'" [class.badge--info]="p.verificationStatus === 'REQUIRES_MORE_INFORMATION'">
+            {{ verificationLabels[p.verificationStatus] }}
+          </span>
+        </span>
+      </a>
+    </section>
+  }
+
+  @if (loading()) {
+    <div class="panel"><app-spinner label="Chargement…" /></div>
+  } @else if (nextTrip(); as t) {
+    <section class="ticket ticket--teal" aria-label="Prochain départ">
+      <div>
+        <div class="ticket__label"><app-icon name="route" /> Prochain départ</div>
+        <div class="ticket__route">
+          <span>{{ t.departureCity }}</span><span class="ticket__line"></span><span>{{ t.destinationCity }}</span>
+        </div>
+        <div class="ticket__meta">
+          <span class="chip"><app-icon name="clock" /> {{ t.departureDate | date: 'EEE d MMM' }} · {{ t.departureTime.slice(0, 5) }}</span>
+          <span class="chip"><app-icon name="seat" /> {{ t.availableSeats }} / {{ t.totalSeats }} places libres</span>
+        </div>
+      </div>
+      <div class="ticket__side">
+        <span class="progress__label">{{ bookedSeats(t) }} place{{ bookedSeats(t) > 1 ? 's' : '' }} réservée{{ bookedSeats(t) > 1 ? 's' : '' }} ({{ fillPercent(t) }} %)</span>
+        <div class="progress" role="progressbar" [attr.aria-valuenow]="fillPercent(t)" aria-valuemin="0" aria-valuemax="100" aria-label="Taux de remplissage"><span [style.width.%]="fillPercent(t)"></span></div>
+        <a class="btn btn--primary btn--sm" [routerLink]="['/trips', t.id]">Voir le trajet <app-icon name="arrow" /></a>
+      </div>
+    </section>
+  } @else {
+    <section class="ticket ticket--empty">
+      <strong>Aucun trajet publié à venir</strong>
+      <p>Publiez un trajet pour recevoir vos premières réservations.</p>
+      <a class="btn btn--primary btn--sm" routerLink="/driver/trips/new"><app-icon name="plus" /> Publier un trajet</a>
+    </section>
+  }
+
+  <section>
+    <h2 class="section-title">Gérer mon activité</h2>
+    <div class="tile-grid">
+      <a class="tile tile--teal" routerLink="/driver/trips">
+        <span class="tile__icon"><app-icon name="route" /></span>
+        <span><h3>Mes trajets</h3><p>Gérez vos trajets publiés et leurs réservations.</p></span>
+        <app-icon class="tile__arrow" name="arrow" />
+      </a>
+      <a class="tile" routerLink="/driver/bookings">
+        <span class="tile__icon"><app-icon name="clipboard" /></span>
+        <span><h3>Réservations reçues</h3><p>Réservations faites sur vos trajets, notez vos passagers.</p></span>
+        <app-icon class="tile__arrow" name="arrow" />
+      </a>
+      <a class="tile tile--blue" routerLink="/driver/vehicles">
+        <span class="tile__icon"><app-icon name="car" /></span>
+        <span><h3>Mes véhicules</h3><p>Ajoutez ou modifiez vos véhicules.</p></span>
+        <app-icon class="tile__arrow" name="arrow" />
+      </a>
+      <a class="tile tile--green" routerLink="/driver/verification">
+        <span class="tile__icon"><app-icon name="shield" /></span>
+        <span><h3>Vérification</h3><p>Suivez votre statut et soumettez vos documents.</p></span>
+        <app-icon class="tile__arrow" name="arrow" />
+      </a>
+      <a class="tile tile--amber" routerLink="/notifications">
+        <span class="tile__icon"><app-icon name="bell" /></span>
+        <span><h3>Notifications</h3><p>Réservations reçues, avis, vérification.</p></span>
+        <app-icon class="tile__arrow" name="arrow" />
+      </a>
+      <a class="tile tile--red" routerLink="/profile">
+        <span class="tile__icon"><app-icon name="user" /></span>
+        <span><h3>Mon profil</h3><p>Modifiez vos informations personnelles.</p></span>
+        <app-icon class="tile__arrow" name="arrow" />
+      </a>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel__head">
+      <h2>Derniers avis reçus</h2>
+      <a routerLink="/reviews">Tout voir</a>
+    </div>
+    @if (reviewsLoading()) {
+      <app-spinner label="Chargement…" />
+    } @else if (reviews().length === 0) {
+      <p class="empty-note"><app-icon name="star" /> Vous n'avez pas encore reçu d'avis.</p>
+    } @else {
+      <ul class="review-list">
+        @for (r of reviews(); track r.id) {
+          <li class="review-item">
+            <span class="avatar" aria-hidden="true">{{ initials(r.authorFullName) }}</span>
+            <div>
+              <strong>{{ r.authorFullName }}</strong>
+              <app-rating-stars [value]="r.rating" />
+              @if (r.comment) { <p>{{ r.comment }}</p> }
+              <a class="review-report-link" [routerLink]="['/reports/new']" [queryParams]="{ reviewId: r.id }">Signaler cet avis</a>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  </section>
+</div>

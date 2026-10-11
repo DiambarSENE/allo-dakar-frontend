@@ -1,0 +1,162 @@
+@use '../../../../styles/tokens' as t;
+
+:host { display: contents; }
+
+.chat {
+  position: fixed;
+  right: max(1.25rem, env(safe-area-inset-right));
+  bottom: max(1.25rem, env(safe-area-inset-bottom));
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: t.$space-3;
+}
+
+// --- Point flottant ---------------------------------------------------------
+.chat__fab {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 3.7rem;
+  height: 3.7rem;
+  border: 0;
+  border-radius: 50%;
+  color: #fff;
+  background: linear-gradient(145deg, t.$color-primary, t.$color-primary-dark);
+  box-shadow: 0 10px 26px rgba(226, 103, 42, .45);
+  cursor: pointer;
+  transition: transform .18s ease, box-shadow .18s ease;
+
+  svg { width: 1.6rem; height: 1.6rem; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  &:hover { transform: translateY(-2px) scale(1.04); box-shadow: 0 14px 30px rgba(226, 103, 42, .55); }
+  &:focus-visible { outline: 3px solid t.$color-secondary; outline-offset: 3px; }
+}
+
+.chat__ping {
+  position: absolute;
+  top: .15rem;
+  right: .15rem;
+  width: .85rem;
+  height: .85rem;
+  border-radius: 50%;
+  background: #2fd27d;
+  border: 2px solid #fff;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    border: 2px solid #2fd27d;
+    animation: chat-ping 2s ease-out infinite;
+  }
+}
+@keyframes chat-ping { from { transform: scale(1); opacity: .8; } to { transform: scale(2.2); opacity: 0; } }
+
+// --- Panneau ----------------------------------------------------------------
+.chat__panel {
+  display: flex;
+  flex-direction: column;
+  width: min(23rem, calc(100vw - 2.5rem));
+  max-height: min(34rem, calc(100dvh - 7.5rem));
+  overflow: hidden;
+  background: t.$color-surface;
+  border: 1px solid t.$color-border;
+  border-radius: t.$radius-lg;
+  box-shadow: t.$shadow-lg;
+  animation: chat-in .18s ease-out;
+}
+@keyframes chat-in { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+
+.chat__header {
+  display: flex;
+  align-items: center;
+  gap: t.$space-3;
+  padding: t.$space-4;
+  color: #fff;
+  background: linear-gradient(135deg, t.$color-secondary, t.$color-secondary-dark);
+}
+.chat__avatar {
+  display: grid; place-items: center; flex-shrink: 0;
+  width: 2.5rem; height: 2.5rem; border-radius: 50%;
+  background: rgba(255, 255, 255, .16);
+  svg { width: 1.35rem; height: 1.35rem; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+}
+.chat__title { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.3;
+  small { display: flex; align-items: center; gap: .4rem; font-size: .76rem; opacity: .85; } }
+.chat__online { width: .5rem; height: .5rem; border-radius: 50%; background: #5df2a0; }
+.chat__close { border: 0; background: transparent; color: #fff; font-size: 1.6rem; line-height: 1; cursor: pointer; padding: 0 .25rem; opacity: .85; &:hover { opacity: 1; } }
+
+.chat__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-2;
+  padding: t.$space-4;
+  overflow-y: auto;
+  background: t.$color-background;
+  min-height: 12rem;
+}
+.chat__body--center { align-items: center; justify-content: center; text-align: center; h3 { margin: .25rem 0 0; } p { margin: 0 0 t.$space-3; color: t.$color-muted; font-size: .9rem; } }
+.chat__check { display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 50%; color: #fff; background: t.$color-success; font-size: 1.5rem; font-weight: 700; }
+
+.chat__bubble {
+  max-width: 88%;
+  padding: .6rem .8rem;
+  border-radius: 14px;
+  font-size: .9rem;
+  line-height: 1.45;
+  p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+  time { display: block; margin-top: .2rem; font-size: .68rem; opacity: .65; }
+}
+.chat__bubble--staff { align-self: flex-start; background: t.$color-surface; border: 1px solid t.$color-border; border-bottom-left-radius: 4px; }
+.chat__bubble--me { align-self: flex-end; color: #fff; background: t.$color-primary; border-bottom-right-radius: 4px; }
+
+// --- Formulaires ------------------------------------------------------------
+.chat__guest {
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+  padding: t.$space-4;
+  overflow-y: auto;
+  background: t.$color-background;
+  .chat__bubble { margin-bottom: .35rem; }
+  label { font-size: .8rem; font-weight: 600; color: t.$color-text; margin-top: .25rem; }
+  input, textarea {
+    width: 100%; padding: .6rem .75rem; font: inherit; font-size: .92rem;
+    border: 1px solid t.$color-border; border-radius: t.$radius-md; background: #fff; color: t.$color-text; resize: vertical;
+    &:focus { outline: 2px solid t.$color-primary; outline-offset: 0; border-color: transparent; }
+  }
+  .btn { margin-top: .6rem; width: 100%; }
+}
+.chat__error { color: t.$color-danger; font-size: .76rem; }
+
+.chat__form {
+  display: flex;
+  align-items: flex-end;
+  gap: t.$space-2;
+  padding: t.$space-3;
+  border-top: 1px solid t.$color-border;
+  background: t.$color-surface;
+  textarea {
+    flex: 1; max-height: 6rem; padding: .6rem .8rem; font: inherit; font-size: .92rem; resize: none;
+    border: 1px solid t.$color-border; border-radius: 20px; background: t.$color-background; color: t.$color-text;
+    &:focus { outline: 2px solid t.$color-primary; border-color: transparent; }
+  }
+}
+.chat__send {
+  display: grid; place-items: center; flex-shrink: 0; width: 2.5rem; height: 2.5rem;
+  border: 0; border-radius: 50%; color: #fff; background: t.$color-primary; cursor: pointer;
+  svg { width: 1.2rem; height: 1.2rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  &:disabled { opacity: .5; cursor: not-allowed; }
+}
+
+@media (max-width: 480px) {
+  .chat { right: 1rem; bottom: 1rem; }
+  .chat__fab { width: 3.35rem; height: 3.35rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat__panel, .chat__ping::after { animation: none; }
+  .chat__fab { transition: none; }
+}

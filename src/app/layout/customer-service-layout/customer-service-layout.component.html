@@ -1,0 +1,51 @@
+<div class="app-shell">
+  @if (sidebarOpen()) {
+    <button type="button" class="sidebar__scrim" aria-label="Fermer le menu" (click)="closeSidebar()"></button>
+  }
+  <aside class="sidebar" [class.sidebar--open]="sidebarOpen()">
+    <div class="sidebar__brand">
+      <span class="sidebar__logo"><app-icon name="car" /></span>
+      <span>Allo<span>Dakar</span> <small>Support</small></span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Navigation principale">
+      @for (item of navItems; track item.route) {
+        <a [routerLink]="item.route" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: item.route === '/customer-service' }" (click)="closeSidebar()">
+          <app-icon [name]="item.icon" />
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="sidebar__foot">
+      <div class="sidebar__user">
+        <span class="avatar" aria-hidden="true">{{ initials() }}</span>
+        <div class="sidebar__who">
+          <strong>{{ auth.fullName() }}</strong>
+          <small>{{ roleLabel() }}</small>
+        </div>
+      </div>
+      <button type="button" class="btn btn--outline btn--sm sidebar__logout" (click)="logout()">
+        <app-icon name="logout" /> Déconnexion
+      </button>
+    </div>
+  </aside>
+
+  <div class="app-shell__main">
+    <header class="app-shell__topbar">
+      <button type="button" class="app-shell__menu-toggle" (click)="toggleSidebar()" [attr.aria-expanded]="sidebarOpen()" aria-label="Ouvrir le menu">
+        <app-icon name="menu" />
+      </button>
+      <app-back-button fallback="/customer-service" />
+      <a routerLink="/" class="app-shell__home-link"><app-icon name="home" /> Retour au site public</a>
+      <span class="app-shell__user">
+        <span>{{ auth.fullName() }}</span>
+        <span class="avatar" aria-hidden="true">{{ initials() }}</span>
+      </span>
+    </header>
+
+    <main class="app-shell__content">
+      <router-outlet />
+    </main>
+  </div>
+</div>

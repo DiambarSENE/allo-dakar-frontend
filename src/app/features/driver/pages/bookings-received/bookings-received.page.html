@@ -1,0 +1,73 @@
+<section class="container" style="padding-block: 2rem;">
+  <h1>Réservations reçues</h1>
+
+  @switch (state()) {
+    @case ('loading') {
+      <app-spinner label="Chargement des réservations…" />
+    }
+    @case ('error') {
+      <app-error-state title="Impossible de charger les réservations" (retry)="retry()" />
+    }
+    @case ('success') {
+      @if (bookings().length === 0) {
+        <app-empty-state title="Aucune réservation reçue pour le moment" />
+      } @else {
+        <div class="table-wrapper">
+          <table appDataTable class="data-table">
+            <thead>
+              <tr>
+                <th>Référence</th>
+                <th>Trajet</th>
+                <th>Date</th>
+                <th>Places</th>
+                <th>Montant du trajet</th>
+                <th>Statut</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (b of bookings(); track b.id) {
+                <tr>
+                  <td>{{ b.bookingReference }}</td>
+                  <td>{{ b.trip.departureCity }} → {{ b.trip.destinationCity }}</td>
+                  <td>{{ b.trip.departureDate }}</td>
+                  <td>{{ b.numberOfSeats }}</td>
+                  <td>{{ b.numberOfSeats * b.unitPrice }} FCFA</td>
+                  <td>
+                    <span
+                      class="badge"
+                      [class.badge--success]="b.status === 'CONFIRMED' || b.status === 'COMPLETED'"
+                      [class.badge--warning]="b.status === 'PENDING'"
+                      [class.badge--danger]="b.status === 'CANCELLED' || b.status === 'REJECTED' || b.status === 'EXPIRED'"
+                    >
+                      {{ b.status | statusLabel }}
+                    </span>
+                  </td>
+                  <td style="display:flex; gap:.4rem; flex-wrap:wrap;">
+                    <a class="btn btn--outline btn--sm" [routerLink]="['/bookings', b.id]">Voir</a>
+                    @if (b.status === 'COMPLETED') {
+                      @if (reviewedIds().has(b.id)) {
+                        <span class="badge badge--success">Passager noté</span>
+                      } @else {
+                        <button type="button" class="btn btn--primary btn--sm" (click)="reviewing.set(b)">Noter le passager</button>
+                      }
+                    }
+                    <a class="btn btn--outline btn--sm" [routerLink]="['/reports/new']" [queryParams]="{ bookingId: b.id, reportedUserId: b.passengerId }">Signaler</a>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <app-pagination [pagination]="pagination()" (pageChange)="onPageChange($event)" />
+      }
+    }
+  }
+</section>
+
+@if (reviewing(); as r) {
+  <app-modal title="Noter le passager" (closed)="reviewing.set(null)">
+    <p style="margin-top:0">Réservation {{ r.bookingReference }} — {{ r.trip.departureCity }} → {{ r.trip.destinationCity }}</p>
+    <app-review-form audience="passenger" [tripId]="r.trip.id" [bookingId]="r.id" [targetUserId]="r.passengerId" (submitted)="onReviewSubmitted()" />
+  </app-modal>
+}

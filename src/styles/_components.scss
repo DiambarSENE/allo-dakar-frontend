@@ -1,0 +1,248 @@
+@use 'sass:color';
+@use 'tokens' as t;
+
+// --- Boutons ---------------------------------------------------------------
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: t.$space-2;
+  padding: t.$space-3 t.$space-5;
+  border-radius: t.$radius-md;
+  border: 1px solid transparent;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    opacity 0.15s ease;
+  min-height: 44px; // cible tactile mobile (§9)
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+.btn--primary {
+  background: t.$color-primary;
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background: t.$color-primary-dark;
+  }
+}
+
+.btn--secondary {
+  background: t.$color-secondary;
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background: t.$color-secondary-dark;
+  }
+}
+
+.btn--outline {
+  background: transparent;
+  border-color: t.$color-border;
+  color: t.$color-text;
+
+  &:hover:not(:disabled) {
+    border-color: t.$color-primary;
+    color: t.$color-primary;
+  }
+}
+
+.btn--danger {
+  background: t.$color-danger;
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background: color.adjust(t.$color-danger, $lightness: -8%);
+  }
+}
+
+.btn--ghost {
+  background: transparent;
+  color: t.$color-text;
+
+  &:hover:not(:disabled) {
+    background: t.$color-primary-light;
+  }
+}
+
+.btn--sm {
+  padding: t.$space-2 t.$space-3;
+  font-size: 0.85rem;
+  min-height: 36px;
+}
+
+.btn--block {
+  width: 100%;
+}
+
+// --- Cards -------------------------------------------------------------
+.card {
+  background: t.$color-surface;
+  border: 1px solid t.$color-border;
+  border-radius: t.$radius-lg;
+  box-shadow: t.$shadow-sm;
+  padding: t.$space-5;
+}
+
+.card--interactive {
+  transition:
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+
+  &:hover {
+    box-shadow: t.$shadow-md;
+    transform: translateY(-2px);
+  }
+}
+
+// --- Badges --------------------------------------------------------------
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: t.$radius-pill;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge--success {
+  background: rgba(26, 127, 78, 0.12);
+  color: t.$color-success;
+}
+.badge--warning {
+  background: rgba(184, 134, 11, 0.14);
+  color: t.$color-warning;
+}
+.badge--danger {
+  background: rgba(192, 57, 43, 0.12);
+  color: t.$color-danger;
+}
+.badge--info {
+  background: rgba(37, 99, 235, 0.12);
+  color: t.$color-info;
+}
+.badge--muted {
+  background: rgba(107, 114, 128, 0.14);
+  color: t.$color-muted;
+}
+.badge--primary {
+  background: t.$color-primary-light;
+  color: t.$color-primary-dark;
+}
+
+// --- Formulaires ---------------------------------------------------------
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-1;
+  margin-bottom: t.$space-4;
+}
+
+.form-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: t.$color-text;
+}
+
+.form-control {
+  padding: t.$space-3;
+  border: 1px solid t.$color-border;
+  border-radius: t.$radius-md;
+  font-size: 0.95rem;
+  background: t.$color-surface;
+  color: t.$color-text;
+  min-height: 44px;
+  width: 100%;
+
+  &:focus {
+    border-color: t.$color-primary;
+  }
+
+  &[aria-invalid='true'] {
+    border-color: t.$color-danger;
+  }
+}
+
+.form-error {
+  color: t.$color-danger;
+  font-size: 0.82rem;
+}
+
+.form-hint {
+  color: t.$color-muted;
+  font-size: 0.82rem;
+}
+
+// --- Alertes ---------------------------------------------------------------
+.alert {
+  display: flex;
+  gap: t.$space-3;
+  padding: t.$space-4;
+  border-radius: t.$radius-md;
+  border: 1px solid transparent;
+  font-size: 0.9rem;
+}
+
+.alert--info {
+  background: rgba(37, 99, 235, 0.08);
+  border-color: rgba(37, 99, 235, 0.25);
+  color: color.adjust(t.$color-info, $lightness: -10%);
+}
+.alert--success {
+  background: rgba(26, 127, 78, 0.08);
+  border-color: rgba(26, 127, 78, 0.25);
+  color: t.$color-success;
+}
+.alert--warning {
+  background: rgba(184, 134, 11, 0.1);
+  border-color: rgba(184, 134, 11, 0.3);
+  color: t.$color-warning;
+}
+.alert--danger {
+  background: rgba(192, 57, 43, 0.08);
+  border-color: rgba(192, 57, 43, 0.25);
+  color: t.$color-danger;
+}
+
+// --- Tables ------------------------------------------------------------
+.table-wrapper {
+  overflow-x: auto;
+  border: 1px solid t.$color-border;
+  border-radius: t.$radius-md;
+}
+
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+
+  th,
+  td {
+    padding: t.$space-3 t.$space-4;
+    text-align: left;
+    border-bottom: 1px solid t.$color-border;
+    white-space: nowrap;
+  }
+
+  th {
+    background: t.$color-background;
+    font-weight: 600;
+    color: t.$color-muted;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  tbody tr:hover {
+    background: rgba(226, 103, 42, 0.04);
+  }
+}

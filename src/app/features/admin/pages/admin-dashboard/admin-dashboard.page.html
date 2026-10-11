@@ -1,0 +1,92 @@
+<div class="space">
+  <section class="hero hero--admin">
+    <div>
+      <span class="hero__eyebrow"><app-icon name="key" /> Administration</span>
+      <h1>Bonjour{{ firstName() ? ', ' + firstName() : '' }}, voici la plateforme</h1>
+      <p>Gérez les utilisateurs et leurs rôles, validez les conducteurs et modérez les contenus.</p>
+    </div>
+    <div class="hero__actions">
+      <a class="btn btn--light" routerLink="/admin/users"><app-icon name="users" /> Utilisateurs et rôles</a>
+      <a class="btn btn--glass" routerLink="/admin/reports">Signalements</a>
+    </div>
+  </section>
+
+  @if (statsLoading()) {
+    <p class="empty-note">Chargement des statistiques…</p>
+  } @else if (statsError()) {
+    <div class="notice" role="status"><app-icon name="alert" /><span>Les statistiques sont momentanément indisponibles.</span></div>
+  } @else {
+    <section class="kpi-grid" aria-label="Statistiques">
+      <a class="kpi kpi--blue" routerLink="/admin/users">
+        <span class="kpi__icon"><app-icon name="users" /></span>
+        <span class="kpi__body"><span class="kpi__label">Comptes actifs</span><span class="kpi__value">{{ totalUsers() }}</span><span class="kpi__hint">conducteurs + passagers</span></span>
+      </a>
+      <a class="kpi kpi--teal" routerLink="/admin/users">
+        <span class="kpi__icon"><app-icon name="car" /></span>
+        <span class="kpi__body"><span class="kpi__label">Conducteurs</span><span class="kpi__value">{{ driversCount() }}</span><span class="kpi__hint">comptes actifs</span></span>
+      </a>
+      <a class="kpi" routerLink="/admin/users">
+        <span class="kpi__icon"><app-icon name="user" /></span>
+        <span class="kpi__body"><span class="kpi__label">Passagers</span><span class="kpi__value">{{ passengersCount() }}</span><span class="kpi__hint">comptes actifs</span></span>
+      </a>
+    </section>
+  }
+
+  <section>
+    <h2 class="section-title">Communauté</h2>
+    <div class="tile-grid">
+      <a class="tile tile--blue" routerLink="/admin/users">
+        <span class="tile__icon"><app-icon name="users" /></span>
+        <span><h3>Utilisateurs et rôles</h3><p>Rechercher, suspendre, attribuer les rôles.</p></span>
+        <app-icon class="tile__arrow" name="arrow" />
+      </a>
+      <a class="tile tile--green" routerLink="/admin/verifications">
+        <span class="tile__icon"><app-icon name="shield" /></span>
+        <span><h3>Vérifications conducteurs</h3><p>Valider les documents des conducteurs.</p></span>
+        <app-icon class="tile__arrow" name="arrow" />
+      </a>
+      <a class="tile tile--amber" routerLink="/admin/reviews">
+        <span class="tile__icon"><app-icon name="star" /></span>
+        <span><h3>Avis</h3><p>Modérer, masquer ou republier les avis.</p></span>
+        <app-icon class="tile__arrow" name="arrow" />
+      </a>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Activité</h2>
+    <div class="tile-grid">
+      <a class="tile tile--teal" routerLink="/admin/trips">
+        <span class="tile__icon"><app-icon name="route" /></span>
+        <span><h3>Trajets</h3><p>Tous les trajets publiés sur la plateforme.</p></span>
+        <app-icon class="tile__arrow" name="arrow" />
+      </a>
+      <a class="tile" routerLink="/admin/bookings">
+        <span class="tile__icon"><app-icon name="ticket" /></span>
+        <span><h3>Réservations</h3><p>Suivi des réservations et de leur statut.</p></span>
+        <app-icon class="tile__arrow" name="arrow" />
+      </a>
+      <a class="tile tile--green" routerLink="/admin/payments">
+        <span class="tile__icon"><app-icon name="wallet" /></span>
+        <span><h3>Paiements</h3><p>Transactions et statuts de paiement.</p></span>
+        <app-icon class="tile__arrow" name="arrow" />
+      </a>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Modération</h2>
+    <div class="tile-grid">
+      <a class="tile tile--red" routerLink="/admin/reports">
+        <span class="tile__icon"><app-icon name="flag" /></span>
+        <span><h3>Signalements</h3><p>Traiter les signalements des utilisateurs.</p></span>
+        <app-icon class="tile__arrow" name="arrow" />
+      </a>
+      <a class="tile tile--blue" routerLink="/customer-service">
+        <span class="tile__icon"><app-icon name="headset" /></span>
+        <span><h3>Service client</h3><p>Litiges et messages des utilisateurs.</p></span>
+        <app-icon class="tile__arrow" name="arrow" />
+      </a>
+    </div>
+  </section>
+</div>

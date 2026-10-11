@@ -1,0 +1,72 @@
+<section class="container form-page">
+  <div class="form-head">
+    <div>
+      <h1>Vérification conducteur</h1>
+      <p>
+        Pour publier des trajets, vous devez fournir votre permis de conduire et la carte grise du véhicule utilisé.
+        Les documents sont conservés de manière sécurisée et consultables uniquement par l'administration.
+      </p>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <app-spinner label="Chargement de votre statut…" />
+  } @else {
+    @if (profile(); as p) {
+      <div class="alert" [class.alert--success]="p.verificationStatus === 'VERIFIED'"
+           [class.alert--warning]="p.verificationStatus === 'PENDING' || p.verificationStatus === 'UNDER_REVIEW'"
+           [class.alert--danger]="p.verificationStatus === 'REJECTED'"
+           [class.alert--info]="p.verificationStatus === 'REQUIRES_MORE_INFORMATION'">
+        Statut actuel : <strong>{{ statusLabels[p.verificationStatus] }}</strong>
+      </div>
+    }
+
+    <form class="form-card" style="margin-top: 1rem;" [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-section">
+        <h2 class="form-section__title"><span class="form-section__icon"><app-icon name="id" /></span> Permis de conduire <small>Obligatoire</small></h2>
+        <div class="form-field">
+          <label class="form-label" for="drivingLicenseNumber">Numéro du permis (optionnel)</label>
+          <input id="drivingLicenseNumber" class="form-control" type="text" formControlName="drivingLicenseNumber" />
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="drivingLicense">Permis de conduire *</label>
+          <input id="drivingLicense" class="form-control" type="file" accept="application/pdf,image/jpeg,image/png"
+                 (change)="onFileSelected($event, 'license')" />
+          @if (licenseFile(); as file) {
+            <span class="form-hint">✓ {{ file.name }} ({{ (file.size / 1024 / 1024).toFixed(2) }} Mo)</span>
+          }
+        </div>
+
+      </div>
+
+      <div class="form-section">
+        <h2 class="form-section__title"><span class="form-section__icon"><app-icon name="clipboard" /></span> Carte grise <small>Obligatoire</small></h2>
+        <div class="form-field">
+          <label class="form-label" for="vehicleRegistrationNumber">Numéro de carte grise (optionnel)</label>
+          <input id="vehicleRegistrationNumber" class="form-control" type="text" formControlName="vehicleRegistrationNumber" />
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="vehicleRegistration">Carte grise *</label>
+          <input id="vehicleRegistration" class="form-control" type="file" accept="application/pdf,image/jpeg,image/png"
+                 (change)="onFileSelected($event, 'registration')" />
+          @if (registrationFile(); as file) {
+            <span class="form-hint">✓ {{ file.name }} ({{ (file.size / 1024 / 1024).toFixed(2) }} Mo)</span>
+          }
+        </div>
+
+        @if (fileError(); as error) {
+          <div class="alert alert--danger" style="margin-top: 1rem;">{{ error }}</div>
+        }
+      </div>
+
+      <div class="form-actions">
+        <p class="form-hint">Formats acceptés : PDF, JPG ou PNG.</p>
+        <button type="submit" class="btn btn--primary" [disabled]="submitting()">
+          {{ submitting() ? 'Envoi des documents…' : 'Soumettre pour vérification' }}
+        </button>
+      </div>
+    </form>
+  }
+</section>

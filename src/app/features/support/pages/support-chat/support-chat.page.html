@@ -1,0 +1,44 @@
+<section class="container form-page form-page--narrow" style="max-width: 760px;">
+  <div class="form-head">
+    <div>
+      <h1>{{ staffMode ? 'Messages du service client' : 'Contacter le service client' }}</h1>
+      <p>{{ staffMode ? 'Choisissez un utilisateur pour répondre à sa demande.' : 'Écrivez votre message. Notre équipe vous répondra dans cette conversation.' }}</p>
+    </div>
+    <button type="button" class="btn btn--outline btn--sm" (click)="load()">Actualiser</button>
+  </div>
+
+  @if (staffMode) {
+    <div class="chat-people">
+      @for (m of conversations(); track keyOf(m)) {
+        <button type="button" class="chat-person" [class.chat-person--active]="keyOf(m) === selectedUser()" (click)="chooseUser(keyOf(m))">
+          <span class="chat-person__dot" [class.chat-person__dot--guest]="!m.userId"></span>
+          {{ m.phoneNumber || 'Sans numéro' }} · {{ m.userId ? m.userId.slice(0, 8) : 'visiteur' }}
+        </button>
+      }
+    </div>
+    @if (selectedIsGuest()) {
+      <div class="notice" role="note" style="margin-bottom: 1rem;"><span>Visiteur non connecté : il n'a pas de compte, rappelez-le au numéro indiqué.</span></div>
+    }
+  }
+
+  <div class="form-card chat-thread" aria-live="polite">
+    @for (m of thread(); track m.id) {
+      <article class="chat-msg" [class.chat-msg--staff]="m.fromStaff">
+        <small>{{ m.fromStaff ? 'Service client' : (staffMode ? (m.phoneNumber || 'Utilisateur') : 'Vous') }} · {{ m.createdAt | date:'short' }}</small>
+        <p>{{ m.message }}</p>
+      </article>
+    } @empty { <p class="empty-note" style="margin: auto;">Aucun message pour le moment.</p> }
+  </div>
+
+  <form class="form-card" style="margin-top: 1rem;" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="form-section">
+      <div class="form-field">
+        <label class="form-label" for="support-message">Message</label>
+        <textarea id="support-message" class="form-control" rows="4" formControlName="message" maxlength="2000" placeholder="Comment pouvons-nous vous aider ?"></textarea>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn--primary" [disabled]="submitting() || (staffMode && selectedIsGuest())">{{ submitting() ? 'Envoi…' : 'Envoyer le message' }}</button>
+    </div>
+  </form>
+</section>

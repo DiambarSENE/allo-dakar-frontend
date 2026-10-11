@@ -1,0 +1,92 @@
+<h1>Signalements</h1>
+
+@switch (state()) {
+  @case ('loading') {
+    <app-spinner label="Chargement des signalements…" />
+  }
+  @case ('error') {
+    <app-error-state title="Impossible de charger les signalements" (retry)="retry()" />
+  }
+  @case ('success') {
+    @if (reports().length === 0) {
+      <app-empty-state title="Aucun signalement" />
+    } @else {
+      <div class="table-wrapper">
+        <table appDataTable class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Signalé par</th>
+              <th>Cible</th>
+              <th>Motif</th>
+              <th>Description</th>
+              <th>Statut</th>
+              <th>Résolution</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of reports(); track r.id) {
+              <tr>
+                <td>{{ r.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+                <td>{{ r.reporterName }}</td>
+                <td>
+                  @if (r.reportedUserName) { <div>Utilisateur : {{ r.reportedUserName }}</div> }
+                  @if (r.tripId) { <div><a [routerLink]="['/trips', r.tripId]">Trajet</a></div> }
+                  @if (r.bookingId) { <div><a [routerLink]="['/bookings', r.bookingId]">Réservation</a></div> }
+                  @if (r.reviewId) { <div>Avis <a routerLink="/admin/reviews">(modérer)</a></div> }
+                </td>
+                <td>{{ reasonLabels[r.reason] }}</td>
+                <td>{{ r.description || '—' }}</td>
+                <td>
+                  <span class="badge" [class]="'badge ' + badgeClass(r.status)">{{ statusLabels[r.status] }}</span>
+                  @if (r.resolvedAt) { <small style="display:block">{{ r.resolvedAt | date: 'dd/MM/yyyy' }}</small> }
+                </td>
+                <td>{{ r.resolution || '—' }}</td>
+                <td style="display:flex; gap:0.4rem; flex-wrap: wrap;">
+                  @if (isOpen(r)) {
+                    <button type="button" class="btn btn--primary btn--sm" [disabled]="actingOnId() === r.id" (click)="startDecision(r, 'resolve')">
+                      Résoudre
+                    </button>
+                    <button type="button" class="btn btn--danger btn--sm" [disabled]="actingOnId() === r.id" (click)="startDecision(r, 'reject')">
+                      Rejeter
+                    </button>
+                  }
+                  @if (r.reviewId) {
+                    <button type="button" class="btn btn--outline btn--sm" [disabled]="actingOnId() === r.id" (click)="hideReview(r)">
+                      Masquer l'avis
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <app-pagination [pagination]="pagination()" (pageChange)="onPageChange($event)" />
+    }
+  }
+}
+
+@if (deciding(); as d) {
+  <app-modal [title]="d.decision === 'resolve' ? 'Résoudre le signalement' : 'Rejeter le signalement'" (closed)="cancelDecision()">
+    <p style="margin-top:0">
+      <strong>{{ reasonLabels[d.report.reason] }}</strong> — signalé par {{ d.report.reporterName }}
+    </p>
+    @if (d.report.description) { <p class="form-hint">« {{ d.report.description }} »</p> }
+    <div class="form-field">
+      <label class="form-label" for="resolution">
+        {{ d.decision === 'resolve' ? 'Décision / mesures prises (optionnel)' : 'Motif du rejet (optionnel)' }}
+      </label>
+      <textarea id="resolution" class="form-control" rows="4" maxlength="1000" [value]="resolutionText()" (input)="setResolution($event)"></textarea>
+      <span class="form-hint">Le signalant sera notifié du traitement.</span>
+    </div>
+    <div modal-actions>
+      <button type="button" class="btn btn--outline" (click)="cancelDecision()" [disabled]="!!actingOnId()">Annuler</button>
+      <button type="button" class="btn" [class.btn--primary]="d.decision === 'resolve'" [class.btn--danger]="d.decision === 'reject'"
+              (click)="confirmDecision()" [disabled]="!!actingOnId()">
+        {{ actingOnId() ? 'Enregistrement…' : (d.decision === 'resolve' ? 'Marquer comme résolu' : 'Rejeter') }}
+      </button>
+    </div>
+  </app-modal>
+}

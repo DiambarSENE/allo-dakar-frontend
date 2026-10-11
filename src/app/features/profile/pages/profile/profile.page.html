@@ -1,0 +1,70 @@
+<section class="container form-page form-page--narrow">
+  <div class="form-head">
+    <div>
+      <h1>Mon profil</h1>
+      <p>Gardez vos informations à jour pour que conducteurs et passagers puissent vous reconnaître.</p>
+    </div>
+  </div>
+
+  @if (state() === 'loading') {
+    <app-spinner label="Chargement de votre profil…" />
+  } @else if (state() === 'error') {
+    <div class="alert alert--danger" role="alert">Impossible de charger votre profil pour le moment.</div>
+  } @else {
+    <form class="form-card" [formGroup]="form" (ngSubmit)="save()">
+      <div class="form-section">
+        <div class="form-identity">
+          <span class="form-avatar" aria-hidden="true">{{ (form.get('firstName')?.value || '?').charAt(0) }}{{ (form.get('lastName')?.value || '').charAt(0) }}</span>
+          <div>
+            <strong>{{ form.get('firstName')?.value }} {{ form.get('lastName')?.value }}</strong>
+            <span>Compte Allo Dakar</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-grid">
+          <div class="form-field">
+            <label class="form-label" for="firstName">Prénom</label>
+            <input
+              id="firstName"
+              class="form-control"
+              type="text"
+              formControlName="firstName"
+              [attr.aria-invalid]="form.get('firstName')?.invalid && form.get('firstName')?.touched"
+            />
+            @if (form.get('firstName')?.hasError('required') && form.get('firstName')?.touched) {
+              <span class="form-error">Le prénom est obligatoire.</span>
+            }
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="lastName">Nom</label>
+            <input
+              id="lastName"
+              class="form-control"
+              type="text"
+              formControlName="lastName"
+              [attr.aria-invalid]="form.get('lastName')?.invalid && form.get('lastName')?.touched"
+            />
+            @if (form.get('lastName')?.hasError('required') && form.get('lastName')?.touched) {
+              <span class="form-error">Le nom est obligatoire.</span>
+            }
+          </div>
+
+          <div class="form-field form-field--full">
+            <label class="form-label" for="phone">Téléphone</label>
+            <input id="phone" class="form-control" type="tel" formControlName="phone" placeholder="77 123 45 67" />
+            <span class="form-hint">L'email et le mot de passe se gèrent depuis votre compte Keycloak.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn--primary" [disabled]="saving()">
+          {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
+        </button>
+      </div>
+    </form>
+  }
+</section>

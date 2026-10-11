@@ -1,0 +1,65 @@
+@use '../../../../styles/tokens' as t;
+
+.search-form {
+  background: t.$color-surface;
+  border-radius: t.$radius-lg;
+  padding: t.$space-5;
+  box-shadow: t.$shadow-md;
+}
+
+.search-form__row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: t.$space-4;
+}
+
+.search-form__submit {
+  margin-top: t.$space-2;
+  width: 100%;
+}
+
+.search-form--compact {
+  padding: t.$space-4;
+}
+
+@media (max-width: t.$breakpoint-md) {
+  .search-form__row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: t.$breakpoint-lg) {
+  .search-form__submit {
+    width: auto;
+    padding-inline: t.$space-8;
+  }
+}
+
+/* Formulaire compact de la page d'accueil : champs empilés, lisibles sur mobile et desktop. */
+.search-form--compact .search-form__row { grid-template-columns: 1fr; gap: .7rem; }
+.search-form--compact .form-label { font-size: .82rem; margin-bottom: .25rem; }
+.search-form--compact .form-control { min-height: 46px; border-radius: 10px; }
+.search-form--compact .search-form__submit { width: 100%; min-height: 46px; margin-top: .35rem; }
+
+/* Champs de recherche verticaux et fluides sur tous les écrans. */
+.search-form__row { grid-template-columns: minmax(0, 1fr); gap: .85rem; }
+.search-form .form-field { min-width: 0; }
+.search-form .form-control { width: 100%; min-width: 0; box-sizing: border-box; }
+.search-form__submit { width: 100%; min-height: 46px; }
+
+/* Barre horizontale « moderne » : trois segments + bouton, façon moteur de réservation. */
+.search-form--inline { display: flex; align-items: stretch; gap: .5rem; padding: .55rem; border: 1px solid t.$color-border; border-radius: 22px; box-shadow: 0 20px 50px rgba(15, 22, 19, .22); }
+.search-form--inline .search-form__row { flex: 1; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; }
+.search-form--inline .form-field { margin: 0; padding: .45rem 1.1rem; border-right: 1px solid t.$color-border; }
+.search-form--inline .form-field:last-child { border-right: 0; }
+.search-form--inline .form-label { margin: 0 0 2px; font-size: .68rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: t.$color-muted; }
+.search-form--inline .form-control { min-height: 30px; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; font-size: 1rem; font-weight: 600; }
+.search-form--inline .form-control:focus { outline: 0; box-shadow: none; }
+.search-form--inline .search-form__submit { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; width: auto; min-height: 56px; margin: 0; padding-inline: 1.7rem; border-radius: 16px; font-size: 1rem; }
+@media (max-width: t.$breakpoint-md) {
+  .search-form--inline { flex-direction: column; border-radius: 18px; }
+  .search-form--inline .search-form__row { grid-template-columns: 1fr; }
+  .search-form--inline .form-field { border-right: 0; border-bottom: 1px solid t.$color-border; }
+  .search-form--inline .form-field:last-child { border-bottom: 0; }
+  .search-form--inline .search-form__submit { width: 100%; }
+}

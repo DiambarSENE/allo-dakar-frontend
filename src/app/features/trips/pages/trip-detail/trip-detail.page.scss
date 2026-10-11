@@ -1,0 +1,77 @@
+@use '../../../../../styles/tokens' as t;
+
+.trip-detail {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: t.$space-5;
+  padding-block: t.$space-6;
+  align-items: start;
+}
+
+.trip-detail__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: t.$space-3;
+  margin-bottom: t.$space-4;
+
+  h1 {
+    margin: 0;
+  }
+}
+
+.trip-detail__facts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: t.$space-4;
+  margin: 0;
+
+  dt {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: t.$color-muted;
+  }
+
+  dd {
+    margin: 2px 0 0;
+    font-weight: 600;
+  }
+}
+
+.trip-detail__price {
+  color: t.$color-secondary;
+}
+
+.trip-detail__booking {
+  position: sticky;
+  top: 90px;
+}
+
+.trip-detail__col { display: flex; flex-direction: column; gap: t.$space-4; min-width: 0; }
+.trip-detail__route { margin: 0; }
+.trip-detail__h2 { margin: 0 0 t.$space-4; font-size: 1.05rem; }
+.trip-detail__text { margin: 0; white-space: pre-wrap; line-height: 1.6; color: t.$color-text; }
+
+@media (max-width: t.$breakpoint-lg) {
+  .trip-detail {
+    grid-template-columns: 1fr;
+  }
+
+  .trip-detail__booking {
+    position: static;
+  }
+}
+
+@media (max-width: t.$breakpoint-md) {
+  .trip-detail__facts {
+    grid-template-columns: 1fr;
+  }
+}
+
+.trip-detail__report { display: flex; flex-direction: column; gap: .35rem; margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--color-border); font-size: .82rem; }
+.trip-detail__report span { color: var(--color-muted); }
+.trip-detail__report a { color: var(--color-danger); font-weight: 700; }

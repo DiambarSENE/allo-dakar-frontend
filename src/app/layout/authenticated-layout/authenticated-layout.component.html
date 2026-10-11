@@ -1,0 +1,67 @@
+<div class="app-shell">
+  @if (sidebarOpen()) {
+    <button type="button" class="sidebar__scrim" aria-label="Fermer le menu" (click)="closeSidebar()"></button>
+  }
+  <aside class="sidebar" [class.sidebar--open]="sidebarOpen()">
+    <div class="sidebar__brand">
+      <span class="sidebar__logo"><app-icon name="car" /></span>
+      <span>Allo<span>Dakar</span></span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Navigation principale">
+      @for (group of navGroups(); track $index) {
+        @if (group.section) { <p class="sidebar__section">{{ group.section }}</p> }
+        @for (item of group.items; track item.route + item.label) {
+          <a [routerLink]="item.route" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: isExact(item.route) }" (click)="closeSidebar()">
+            <app-icon [name]="item.icon" />
+            <span>{{ item.label }}</span>
+          </a>
+        }
+      }
+    </nav>
+
+    <div class="sidebar__foot">
+      <div class="sidebar__user">
+        <span class="avatar" aria-hidden="true">{{ initials() }}</span>
+        <div class="sidebar__who">
+          <strong>{{ auth.fullName() }}</strong>
+          <small>{{ roleLabel() }}</small>
+        </div>
+      </div>
+      <button type="button" class="btn btn--outline btn--sm sidebar__logout" (click)="logout()">
+        <app-icon name="logout" /> Déconnexion
+      </button>
+    </div>
+  </aside>
+
+  <div class="app-shell__main">
+    <header class="app-shell__topbar">
+      <button type="button" class="app-shell__menu-toggle" (click)="toggleSidebar()" [attr.aria-expanded]="sidebarOpen()" aria-label="Ouvrir le menu">
+        <app-icon name="menu" />
+      </button>
+      <app-back-button fallback="/dashboard" />
+      <a routerLink="/" class="app-shell__home-link"><app-icon name="home" /> Retour au site public</a>
+      <span class="app-shell__user">
+        <span>{{ auth.fullName() }}</span>
+        <span class="avatar" aria-hidden="true">{{ initials() }}</span>
+      </span>
+    </header>
+
+    <main class="app-shell__content">
+      <router-outlet />
+    </main>
+  </div>
+
+  @if (bottomNav().length > 0) {
+    <nav class="bottom-nav" aria-label="Accès rapides">
+      @for (item of bottomNav(); track item.route) {
+        <a [routerLink]="item.route" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: item.exact ?? false }" [class.bottom-nav__cta]="item.cta">
+          <app-icon [name]="item.icon" />
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+  }
+</div>
+
+<app-support-widget />

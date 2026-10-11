@@ -1,0 +1,61 @@
+<div class="space">
+  <section class="hero hero--support">
+    <div>
+      <span class="hero__eyebrow"><app-icon name="headset" /> Service client</span>
+      <h1>Bonjour{{ firstName() ? ', ' + firstName() : '' }} 👋</h1>
+      <p>Accompagnez les utilisateurs : messages, réservations, trajets et litiges au même endroit.</p>
+    </div>
+    <div class="hero__actions">
+      <a class="btn btn--light" routerLink="/customer-service/support"><app-icon name="message" /> Messages utilisateurs</a>
+      <a class="btn btn--glass" routerLink="/customer-service/disputes">Litiges</a>
+    </div>
+  </section>
+
+  @if (statsLoading()) {
+    <p class="empty-note">Chargement des statistiques…</p>
+  } @else if (statsError()) {
+    <div class="notice" role="status"><app-icon name="alert" /><span>Les statistiques sont momentanément indisponibles.</span></div>
+  } @else {
+    <section class="kpi-grid" aria-label="Statistiques">
+      <a class="kpi kpi--teal" routerLink="/customer-service/users">
+        <span class="kpi__icon"><app-icon name="car" /></span>
+        <span class="kpi__body"><span class="kpi__label">Conducteurs</span><span class="kpi__value">{{ driversCount() }}</span><span class="kpi__hint">comptes actifs</span></span>
+      </a>
+      <a class="kpi kpi--blue" routerLink="/customer-service/users">
+        <span class="kpi__icon"><app-icon name="user" /></span>
+        <span class="kpi__body"><span class="kpi__label">Passagers</span><span class="kpi__value">{{ passengersCount() }}</span><span class="kpi__hint">comptes actifs</span></span>
+      </a>
+    </section>
+  }
+
+  <section>
+    <h2 class="section-title">Outils</h2>
+    <div class="tile-grid">
+      <a class="tile tile--blue" routerLink="/customer-service/support">
+        <span class="tile__icon"><app-icon name="message" /></span>
+        <span><h3>Messages utilisateurs</h3><p>Répondre aux messages reçus.</p></span>
+        <app-icon class="tile__arrow" name="arrow" />
+      </a>
+      <a class="tile" routerLink="/customer-service/users">
+        <span class="tile__icon"><app-icon name="users" /></span>
+        <span><h3>Utilisateurs</h3><p>Rechercher un compte et consulter son statut.</p></span>
+        <app-icon class="tile__arrow" name="arrow" />
+      </a>
+      <a class="tile tile--teal" routerLink="/customer-service/bookings">
+        <span class="tile__icon"><app-icon name="ticket" /></span>
+        <span><h3>Réservations</h3><p>Consulter ou annuler une réservation.</p></span>
+        <app-icon class="tile__arrow" name="arrow" />
+      </a>
+      <a class="tile tile--green" routerLink="/customer-service/trips">
+        <span class="tile__icon"><app-icon name="route" /></span>
+        <span><h3>Trajets</h3><p>Consulter les trajets publiés.</p></span>
+        <app-icon class="tile__arrow" name="arrow" />
+      </a>
+      <a class="tile tile--amber" routerLink="/customer-service/disputes">
+        <span class="tile__icon"><app-icon name="scale" /></span>
+        <span><h3>Litiges</h3><p>Suivre les litiges ouverts.</p></span>
+        <app-icon class="tile__arrow" name="arrow" />
+      </a>
+    </div>
+  </section>
+</div>

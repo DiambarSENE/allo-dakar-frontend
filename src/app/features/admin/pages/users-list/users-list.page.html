@@ -1,0 +1,105 @@
+<h1>Utilisateurs</h1>
+
+@switch (state()) {
+  @case ('loading') {
+    <app-spinner label="Chargement des utilisateurs…" />
+  }
+  @case ('error') {
+    <app-error-state title="Impossible de charger les utilisateurs" (retry)="retry()" />
+  }
+  @case ('success') {
+    <div class="table-wrapper">
+      <table appDataTable class="data-table">
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Téléphone</th>
+            <th>Rôles</th>
+            <th>Statut</th>
+            <th>Inscription vérifiée</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (u of users(); track u.id) {
+            <tr>
+              <td>{{ u.firstName }} {{ u.lastName }}</td>
+              <td>{{ u.email }}</td>
+              <td>{{ u.phone || '—' }}</td>
+              <td>
+                @for (role of u.roles; track role) {
+                  <span class="badge badge--muted" style="margin-right:.25rem">{{ roleLabel(role) }}</span>
+                }
+              </td>
+              <td>
+                <span
+                  class="badge"
+                  [class.badge--success]="u.status === 'ACTIVE'"
+                  [class.badge--danger]="u.status === 'SUSPENDED' || u.status === 'BANNED'"
+                  [class.badge--muted]="u.status === 'PENDING' || u.status === 'INACTIVE'"
+                >
+                  {{ u.status | statusLabel }}
+                </span>
+              </td>
+              <td>{{ u.emailVerified ? 'Oui' : 'Non' }}</td>
+              <td style="display:flex; gap:.4rem; flex-wrap:wrap;">
+                <button type="button" class="btn btn--outline btn--sm" (click)="openRoles(u)">Rôles</button>
+                @if (u.status === 'ACTIVE') {
+                  <button type="button" class="btn btn--danger btn--sm" [disabled]="actingOnId() === u.id" (click)="suspend(u)">
+                    Suspendre
+                  </button>
+                } @else if (u.status === 'SUSPENDED') {
+                  <button type="button" class="btn btn--outline btn--sm" [disabled]="actingOnId() === u.id" (click)="activate(u)">
+                    Réactiver
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <app-pagination [pagination]="pagination()" (pageChange)="onPageChange($event)" />
+  }
+}
+
+@if (editingUser(); as u) {
+  <app-modal [title]="'Rôles de ' + u.firstName + ' ' + u.lastName" (closed)="closeRoles()">
+    <p class="form-hint" style="margin-top:0">{{ u.email }}</p>
+    <fieldset style="border:0; padding:0; margin:0; display:grid; gap:.6rem;">
+      <legend class="visually-hidden">Rôles attribués</legend>
+      @for (role of assignableRoles; track role) {
+        <label style="display:flex; gap:.7rem; align-items:flex-start; cursor:pointer;">
+          <input
+            type="checkbox"
+            style="margin-top:.25rem"
+            [checked]="selectedRoles().has(role)"
+            [disabled]="savingRoles() || (role === 'ADMIN' && isSelf(u))"
+            (change)="toggleRole(role, $any($event.target).checked)"
+          />
+          <span>
+            <strong>{{ roleLabels[role] }}</strong>
+            <small style="display:block; color: var(--color-muted)">{{ roleDescriptions[role] }}</small>
+          </span>
+        </label>
+      }
+    </fieldset>
+    @if (selectedRoles().size === 0) {
+      <p class="form-error">Sélectionnez au moins un rôle.</p>
+    }
+    @if (isSelf(u)) {
+      <p class="form-hint">Vous ne pouvez pas retirer votre propre rôle administrateur.</p>
+    }
+    <p class="form-hint">
+      Le changement est enregistré dans Keycloak ; il s'applique à l'utilisateur à sa prochaine connexion ou
+      au prochain renouvellement de sa session.
+    </p>
+    <div modal-actions>
+      <button type="button" class="btn btn--outline" (click)="closeRoles()" [disabled]="savingRoles()">Annuler</button>
+      <button type="button" class="btn btn--primary" (click)="saveRoles()" [disabled]="!canSaveRoles()">
+        {{ savingRoles() ? 'Enregistrement…' : 'Enregistrer' }}
+      </button>
+    </div>
+  </app-modal>
+}

@@ -1,0 +1,99 @@
+@use 'tokens' as t;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: t.$font-family-base;
+  background: t.$color-background;
+  color: t.$color-text;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0 0 t.$space-3;
+  font-weight: 700;
+  line-height: 1.25;
+  color: t.$color-text;
+}
+
+p {
+  margin: 0 0 t.$space-3;
+}
+
+a {
+  color: t.$color-primary;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  font-family: inherit;
+}
+
+// Focus visible cohérent partout (§10 accessibilité) — ne jamais supprimer l'outline sans
+// fournir une alternative de contraste au moins équivalente.
+:focus-visible {
+  outline: 3px solid t.$color-info;
+  outline-offset: 2px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 t.$space-4;
+}
+
+// Style par défaut pour les listes de définition (détail réservation, détail trajet, etc.)
+dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: t.$space-2 t.$space-4;
+  margin: t.$space-4 0;
+}
+
+dt {
+  color: t.$color-muted;
+  font-size: 0.85rem;
+}
+
+dd {
+  margin: 0;
+  font-weight: 500;
+}

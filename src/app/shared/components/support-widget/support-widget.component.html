@@ -1,0 +1,75 @@
+<div class="chat" [class.chat--open]="open()">
+  @if (open()) {
+    <section class="chat__panel" role="dialog" aria-label="Discuter avec le service client">
+      <header class="chat__header">
+        <span class="chat__avatar" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 16 0v4a2 2 0 0 1-2 2h-1v-6h3M4 12v4a2 2 0 0 0 2 2h1v-6H4M18 18c0 1.7-2.7 3-6 3"/></svg>
+        </span>
+        <div class="chat__title">
+          <strong>Service client</strong>
+          <small><span class="chat__online" aria-hidden="true"></span> Nous répondons dès que possible</small>
+        </div>
+        <button type="button" class="chat__close" (click)="close()" aria-label="Fermer le chat">×</button>
+      </header>
+
+      @if (auth.isAuthenticated()) {
+        <div class="chat__body" #body>
+          <div class="chat__bubble chat__bubble--staff">
+            Bonjour 👋 Comment pouvons-nous vous aider ? Écrivez-nous votre message ci-dessous.
+          </div>
+          @for (m of thread(); track m.id) {
+            <div class="chat__bubble" [class.chat__bubble--staff]="m.fromStaff" [class.chat__bubble--me]="!m.fromStaff">
+              <p>{{ m.message }}</p>
+              <time>{{ m.createdAt | date: 'dd/MM HH:mm' }}</time>
+            </div>
+          }
+        </div>
+        <form class="chat__form" [formGroup]="form" (ngSubmit)="submit()">
+          <textarea formControlName="message" rows="1" maxlength="2000" placeholder="Votre message…"
+                    aria-label="Votre message" (keydown.enter)="onEnter($event)"></textarea>
+          <button type="submit" class="chat__send" [disabled]="sending() || form.invalid" aria-label="Envoyer">
+            <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </form>
+      } @else {
+        @if (sentAsGuest()) {
+          <div class="chat__body chat__body--center">
+            <span class="chat__check" aria-hidden="true">✓</span>
+            <h3>Message envoyé</h3>
+            <p>Notre équipe vous recontactera sur le numéro indiqué.</p>
+            <button type="button" class="btn btn--outline btn--sm" (click)="newGuestMessage()">Envoyer un autre message</button>
+          </div>
+        } @else {
+          <form class="chat__guest" [formGroup]="form" (ngSubmit)="submit()">
+            <div class="chat__bubble chat__bubble--staff">
+              Bonjour 👋 Laissez-nous votre numéro et votre message, nous revenons vers vous rapidement.
+            </div>
+            <label for="chat-phone">Numéro de téléphone</label>
+            <input id="chat-phone" type="tel" formControlName="phoneNumber" placeholder="+221 77 000 00 00" autocomplete="tel">
+            @if (form.controls.phoneNumber.touched && form.controls.phoneNumber.invalid) {
+              <span class="chat__error">Saisissez un numéro de téléphone valide.</span>
+            }
+            <label for="chat-message">Message</label>
+            <textarea id="chat-message" formControlName="message" rows="3" maxlength="2000" placeholder="Comment pouvons-nous vous aider ?"></textarea>
+            @if (form.controls.message.touched && form.controls.message.invalid) {
+              <span class="chat__error">Écrivez votre message.</span>
+            }
+            <button type="submit" class="btn btn--primary" [disabled]="sending()">
+              {{ sending() ? 'Envoi…' : 'Envoyer le message' }}
+            </button>
+          </form>
+        }
+      }
+    </section>
+  }
+
+  <button type="button" class="chat__fab" (click)="toggle()" [attr.aria-expanded]="open()"
+          [attr.aria-label]="open() ? 'Fermer le chat' : 'Discuter avec le service client'">
+    @if (open()) {
+      <svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg>
+    } @else {
+      <svg viewBox="0 0 24 24"><path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-8l-5 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/></svg>
+      <span class="chat__ping" aria-hidden="true"></span>
+    }
+  </button>
+</div>
